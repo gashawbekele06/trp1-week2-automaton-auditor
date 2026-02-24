@@ -1,4 +1,4 @@
-# Python / virtual environments
+# Python / uv / tooling
 __pycache__/
 *.pyc
 *.pyo
@@ -10,11 +10,7 @@ uv.lock
 .env
 .env.local
 *.env.*
-
-# macOS / editor junk
 .DS_Store
-.vscode/
-.idea/
 
-# Temporary / build files
+# Temporary files
 *.log
