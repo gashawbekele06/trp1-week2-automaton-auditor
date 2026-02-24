@@ -1,22 +1,16 @@
 [project]
-name = "automaton-auditor"
+name = "trp1-week2-automaton-auditor"
 version = "0.1.0"
-description = "Week 2 Automaton Auditor - LangGraph forensic swarm"
+description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "langgraph>=0.2.14",
-    "langchain>=0.3.0",
-    "langchain-openai>=0.2.0",
-    "langchain-core>=0.3.0",
-    "pydantic>=2.9",
-    "python-dotenv>=1.0.1",
-    # PDF parsing (basic version)
+    "langchain>=1.2.10",
+    "langchain-core>=1.2.15",
+    "langchain-openai>=1.1.10",
+    "langgraph>=1.0.9",
+    "pillow>=12.1.1",
+    "pydantic>=2.12.5",
     "pypdf2>=3.0.1",
-    # Optional: better PDF extraction (uncomment if you add it later)
-    # "docling>=1.0",
+    "python-dotenv>=1.2.1",
 ]
-
-[tool.uv]
-# Pin Python version for reproducibility
-python = "3.12"
