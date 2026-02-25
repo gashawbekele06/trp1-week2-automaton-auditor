@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from langgraph.graph import StateGraph, START, END
 from src.state import AgentState
 from src.nodes.detectives import repo_investigator, doc_analyst, vision_inspector
+from src.nodes.judges import regional_judge, chief_justice
 
 
 def evidence_aggregator(state: AgentState):
@@ -33,19 +34,44 @@ def build_interim_graph() -> StateGraph:
 
     # Layer 2: Aggregation
     workflow.add_node("EvidenceAggregator", evidence_aggregator)
+    
+    # Layer 3: Judicial Layer (Stubbed)
+    workflow.add_node("RegionalJudge", regional_judge)
+    workflow.add_node("ChiefJustice", chief_justice)
+
+    # --- Routing Logic ---
+
+    def check_for_critical_failures(state: AgentState) -> str:
+        """Route to END if critical errors (like clone failure) occur."""
+        if state.get("errors"):
+            print(f"CRITICAL FAILURE DETECTED: {state['errors']}")
+            return "FAILURE"
+        return "CONTINUE"
 
     # Fan-Out to Detectives
     workflow.add_edge(START, "RepoInvestigator")
     workflow.add_edge(START, "DocAnalyst")
     workflow.add_edge(START, "VisionInspector")
 
-    # Fan-In to Evidence Aggregator
+    # Conditional Fan-In to Evidence Aggregator
+    # Note: Simplified interim handling. Real fan-in usually happens after all nodes return.
     workflow.add_edge("RepoInvestigator", "EvidenceAggregator")
     workflow.add_edge("DocAnalyst", "EvidenceAggregator")
     workflow.add_edge("VisionInspector", "EvidenceAggregator")
 
-    # Judges not required yet per Interim Submission instructions
-    workflow.add_edge("EvidenceAggregator", END)
+    # After aggregation, decide whether to proceed to Judicial layer
+    workflow.add_conditional_edges(
+        "EvidenceAggregator",
+        check_for_critical_failures,
+        {
+            "CONTINUE": "RegionalJudge",
+            "FAILURE": END
+        }
+    )
+
+    # Judicial Flow
+    workflow.add_edge("RegionalJudge", "ChiefJustice")
+    workflow.add_edge("ChiefJustice", END)
 
     return workflow.compile()
 

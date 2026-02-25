@@ -118,8 +118,9 @@ def repo_investigator(state: AgentState) -> Dict:
         evidences["git_forensic_analysis"] = [Evidence(
             goal="Clone and Extract Repo", found=False, content=str(e), location=repo_url, rationale="Clone Failed", confidence=0.0
         )]
+        return {"evidences": evidences, "errors": [f"RepoInvestigator failed: {str(e)}"]}
 
-    return {"evidences": evidences}
+    return {"evidences": evidences, "errors": []}
 
 
 def doc_analyst(state: AgentState) -> Dict:
@@ -183,7 +184,7 @@ def doc_analyst(state: AgentState) -> Dict:
                         confidence=0.8
                     ))
 
-    return {"evidences": evidences}
+    return {"evidences": evidences, "errors": []}
 
 def vision_inspector(state: AgentState) -> Dict:
     """Placeholder for MultiModal vision extraction and description."""
@@ -200,4 +201,4 @@ def vision_inspector(state: AgentState) -> Dict:
          confidence=0.1
     )]
         
-    return {"evidences": evidences}
+    return {"evidences": evidences, "errors": []}
