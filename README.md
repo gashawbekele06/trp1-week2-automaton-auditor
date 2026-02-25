@@ -14,6 +14,14 @@ This repository reflects the **Interim Phase**, containing the Detective Layer. 
 - **Layer 2: Synchronization** (`EvidenceAggregator`) enforces a Fan-In state synchronization, outputting the gathered proof locally.
 - *(Judges and ChiefJustice logic reserved for Final Submission).*
 
+## Prerequisites
+
+Before setting up the project, ensure you have the following installed:
+
+- **[uv](https://docs.astral.sh/uv/)**: A fast Python package and project manager.
+- **Git**: Required for cloning target repositories for analysis.
+- **System Dependencies**: Some dependencies (like `docling`) may require standard build tools or specific libraries depending on your OS.
+
 ## Setup Instructions
 
 This project uses `uv` for minimal, lightning-fast dependency management.
@@ -23,11 +31,18 @@ This project uses `uv` for minimal, lightning-fast dependency management.
 ```bash
 uv sync
 ```
-3. Setup Environment Variables:
-```bash
-cp .env.example .env
-# Edit .env and supply your OpenAI and LangSmith keys.
-```
+3. **Setup Environment Variables**:
+   Copy the example file and fill in your credentials:
+   ```bash
+   cp .env.example .env
+   ```
+
+   | Variable | Description | Required |
+   | :--- | :--- | :--- |
+   | `OPENAI_API_KEY` | Your OpenAI API key for LLM analysis. | Yes |
+   | `LANGCHAIN_TRACING_V2` | Enable LangSmith tracing (set to `true`). | No |
+   | `LANGCHAIN_API_KEY` | Your LangSmith API key. | No |
+   | `LANGCHAIN_PROJECT` | Project name for LangSmith. | No |
 
 ## Running the Swarm
 
