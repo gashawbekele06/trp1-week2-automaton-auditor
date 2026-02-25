@@ -34,5 +34,5 @@ cp .env.example .env
 The interim graph requires a target `--repo` and target `--pdf`.
 
 ```bash
-uv run python src/graph.py --repo "https://github.com/langchain-ai/langchain" --pdf "reports/interim_report.pdf"
+uv run python src/graph.py --repo "https://github.com/gashawbekele06/trp1-week2-automaton-auditor.git" --pdf "reports/interim_report.pdf"
 ```
