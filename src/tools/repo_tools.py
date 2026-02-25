@@ -1,87 +1,115 @@
-import tempfile
-import subprocess
 import ast
+import subprocess
+import tempfile
+import json
 import os
-from typing import Dict, List, Any, Tuple
-from langchain_core.tools import tool
+from pydantic import BaseModel, Field
 
-
-@tool
-def safe_git_clone(repo_url: str) -> Dict[str, Any]:
-    """Clone repo safely into a temporary directory, handling authentication errors gracefully."""
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        try:
-            result = subprocess.run(
-                ["git", "clone", "--depth", "1", repo_url, tmp_dir],
-                check=True, capture_output=True, text=True
-            )
-            return {"success": True, "path": tmp_dir, "stdout": result.stdout, "stderr": result.stderr}
-        except subprocess.CalledProcessError as e:
-            error_msg = e.stderr.lower()
-            if "authentication" in error_msg or "access token" in error_msg:
-                return {"success": False, "path": None, "error": "Git authentication failed – check repo URL or access token."}
-            return {"success": False, "path": None, "error": e.stderr}
-
-
-@tool
-def extract_git_history(repo_path: str) -> Dict[str, Any]:
-    """Extract git log to analyze history: atomicity, timestamps, commit count. Returns list of commits and summary."""
+def clone_repo_sandboxed(repo_url: str) -> tempfile.TemporaryDirectory:
+    """Clones a repo into a temporary directory for sandboxed analysis."""
+    temp_dir = tempfile.TemporaryDirectory()
     try:
         result = subprocess.run(
-            ["git", "-C", repo_path, "log", "--oneline", "--reverse", "--pretty=format:%H|%ad|%s", "--date=iso"],
-            capture_output=True, text=True, check=True
+            ["git", "clone", repo_url, temp_dir.name],
+            capture_output=True,
+            text=True,
+            check=True
         )
-        commits = []
-        lines = result.stdout.strip().split("\n")
-        for line in lines if line:
-            hash_, date, msg = line.split("|", 2)
-            commits.append({"hash": hash_, "timestamp": date, "message": msg})
-        
-        # Analyze atomicity
-        commit_count = len(commits)
-        is_monolithic = commit_count <= 1 or (commit_count == 2 and "init" in commits[0]["message"].lower())
-        timestamps = [c["timestamp"] for c in commits]
-        summary = {
-            "commit_count": commit_count,
-            "is_atomic": not is_monolithic and commit_count > 3,
-            "first_commit": commits[0] if commits else None,
-            "last_commit": commits[-1] if commits else None,
-            "timestamps_span": (timestamps[-1] - timestamps[0]) if len(timestamps) > 1 else "N/A"
-        }
-        return {"success": True, "commits": commits, "summary": summary}
-    except Exception as e:
-        return {"success": False, "error": str(e)}
+        return temp_dir
+    except subprocess.CalledProcessError as e:
+        temp_dir.cleanup()
+        raise RuntimeError(f"Failed to clone repository: {e.stderr}")
 
+def extract_git_history(repo_path: str) -> str:
+    """Extracts git history in an atomic way."""
+    try:
+        result = subprocess.run(
+            ["git", "log", "--oneline", "--reverse"],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        return f"Failed to extract git history: {e.stderr}"
 
-@tool
-def analyze_graph_structure(repo_path: str) -> Dict[str, Any]:
-    """Parse Python files in repo to verify StateGraph instantiation and parallel fan-out via AST (no regex)."""
-    graph_files = []
+class ArchitectureAnalysis(BaseModel):
+    has_pydantic: bool = Field(default=False)
+    has_typed_dict: bool = Field(default=False)
+    state_reducers: list[str] = Field(default_factory=list)
+    state_graph_instantiated: bool = Field(default=False)
+    fan_out_fan_in_patterns: list[str] = Field(default_factory=list)
+    use_tempfile: bool = Field(default=False)
+    has_os_system: bool = Field(default=False)
+    uses_structured_output: bool = Field(default=False)
+
+def analyze_graph_structure(repo_path: str) -> ArchitectureAnalysis:
+    """Parses AST to determine structural characteristics of the agent."""
+    analysis = ArchitectureAnalysis()
+    
     for root, _, files in os.walk(repo_path):
         for file in files:
-            if file.endswith(".py"):
-                graph_files.append(os.path.join(root, file))
-    
-    findings = {"state_graph_found": False, "fan_out_detected": False, "details": []}
-    
-    for file_path in graph_files:
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                tree = ast.parse(f.read(), filename=file_path)
+            if not file.endswith(".py"):
+                continue
             
-            for node in ast.walk(tree):
-                # Check for StateGraph instantiation
-                if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "StateGraph":
-                    findings["state_graph_found"] = True
-                    findings["details"].append(f"StateGraph instantiated in {file_path}")
+            filepath = os.path.join(root, file)
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    content = f.read()
+                tree = ast.parse(content)
                 
-                # Check for fan-out (e.g., add_edge calls in a loop or to multiple nodes)
-                if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "add_edge":
-                    # Simple heuristic for fan-out: multiple add_edge calls or in a loop
-                    if isinstance(node.parent, ast.For) or len([n for n in node.parent.body if isinstance(n, ast.Call) and n.func.attr == "add_edge"]) > 2:
-                        findings["fan_out_detected"] = True
-                        findings["details"].append(f"Potential fan-out architecture in {file_path} via multiple add_edge calls")
-        except SyntaxError:
-            findings["details"].append(f"Syntax error in {file_path} – skipped")
-    
-    return findings
+                for node in ast.walk(tree):
+                    # Check for State Definition Base Classes
+                    if isinstance(node, ast.ClassDef):
+                        for base in node.bases:
+                            if isinstance(base, ast.Name):
+                                if base.id == "BaseModel":
+                                    analysis.has_pydantic = True
+                                elif base.id == "TypedDict":
+                                    analysis.has_typed_dict = True
+                                    
+                    # Check for Reducers in TypedDict (Annotated type hints)
+                    if isinstance(node, ast.AnnAssign):
+                        if isinstance(node.annotation, ast.Subscript):
+                            if isinstance(node.annotation.value, ast.Name) and node.annotation.value.id == "Annotated":
+                                if hasattr(node.annotation, 'slice') and isinstance(node.annotation.slice, ast.Tuple):
+                                    for elt in node.annotation.slice.elts:
+                                        if isinstance(elt, ast.Attribute) and isinstance(elt.value, ast.Name):
+                                            if elt.value.id == "operator":
+                                                analysis.state_reducers.append(f"operator.{elt.attr}")
+                                            
+                    # Check for StateGraph Instantiation and edge logic
+                    if isinstance(node, ast.Call):
+                        if isinstance(node.func, ast.Name) and node.func.id == "StateGraph":
+                            analysis.state_graph_instantiated = True
+                        elif isinstance(node.func, ast.Attribute):
+                            if node.func.attr in ["add_edge", "add_conditional_edges"]:
+                                if hasattr(node.func.value, 'id'):
+                                   analysis.fan_out_fan_in_patterns.append(f"{node.func.value.id}.{node.func.attr}")
+                                else:
+                                    analysis.fan_out_fan_in_patterns.append(f"builder.{node.func.attr}")
+                            
+                            if node.func.attr == "system":
+                                if isinstance(node.func.value, ast.Name) and node.func.value.id == "os":
+                                    analysis.has_os_system = True
+                            
+                            if node.func.attr in ["with_structured_output", "bind_tools"]:
+                                analysis.uses_structured_output = True
+                                
+                    # Check for sandboxed tooling
+                    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                         if node.func.attr == "TemporaryDirectory":
+                             if isinstance(node.func.value, ast.Name) and node.func.value.id == "tempfile":
+                                 analysis.use_tempfile = True
+                             
+            except Exception as e:
+                # Log or handle parsing errors for non-parseable files
+                pass
+                
+    return analysis
+
+def check_file_exists(repo_path: str, filepath: str) -> bool:
+    """Checks if a specified file exists within the cloned repo."""
+    target_path = os.path.join(repo_path, filepath)
+    return os.path.exists(target_path) and os.path.isfile(target_path)

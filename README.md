@@ -1,48 +1,38 @@
-# TRP1 Week 2 – The Automaton Auditor
+# The Automaton Auditor (Interim Submission)
+FDE Challenge Week 2: Orchestrating Deep LangGraph Swarms for Autonomous Governance
 
-Automated governance swarm using LangGraph for forensic code auditing.
+The Automaton Auditor is a Deep LangGraph Swarm designed to autonomously governance code repositories. 
 
-## Structure
+This repository reflects the **Interim Phase**, containing the Detective Layer. It utilizes isolated Detectives (`RepoInvestigator`, `DocAnalyst`, and `VisionInspector`) running in a Fan-Out pattern, parsing GitHub Repositories (AST verification, git log analysis) and PDF documentation. It extracts structured Pydantic `Evidence` objects and aggregates them via a central Fan-In node (`EvidenceAggregator`).
 
-\`\`\`text
-automaton-auditor/
-├── src/
-│   ├── __init__.py
-│   ├── state.py
-│   ├── tools/
-│   │   ├── __init__.py
-│   │   ├── repo_tools.py
-│   │   └── doc_tools.py
-│   ├── nodes/
-│   │   ├── __init__.py
-│   │   ├── setup.py
-│   │   ├── detectives.py
-│   │   ├── judges.py
-│   │   └── justice.py
-│   └── graph.py
-├── rubric/
-│   └── week2_rubric.json
-├── audit/
-│   ├── report_onself_generated/
-│   ├── report_onpeer_generated/
-│   └── report_bypeer_received/
-├── reports/
-│   ├── interim_report.pdf
-│   └── final_report.pdf
-├── .env.example
-├── Dockerfile
-└── README.md
-\`\`\`
+## Architecture (Interim)
 
-## Setup
+- **Layer 1: Detectives** execute Forensics by collecting parsed evidence:
+  - `RepoInvestigator`: Clones the repo to a sandboxed `tempfile` and uses Python `ast` to verify `StateGraph` usage and typed reducers.
+  - `DocAnalyst`: Uses `docling` to chunk and semantically review PDF files.
+  - `VisionInspector`: Extensible node for diagram analysis.
+- **Layer 2: Synchronization** (`EvidenceAggregator`) enforces a Fan-In state synchronization, outputting the gathered proof locally.
+- *(Judges and ChiefJustice logic reserved for Final Submission).*
 
-\`\`\`bash
+## Setup Instructions
+
+This project uses `uv` for minimal, lightning-fast dependency management.
+
+1. Ensure `uv` is installed globally.
+2. Initialize environment:
+```bash
 uv sync
-cp .env.example .env          # then fill in your keys
-\`\`\`
+```
+3. Setup Environment Variables:
+```bash
+cp .env.example .env
+# Edit .env and supply your OpenAI and LangSmith keys.
+```
 
-## Next steps
+## Running the Swarm
 
-- Paste the full rubric JSON into `rubric/week2_rubric.json`
-- Implement state models → tools → nodes → graph
-- Run self-audit and peer audits
+The interim graph requires a target `--repo` and target `--pdf`.
+
+```bash
+uv run python src/graph.py --repo "https://github.com/langchain-ai/langchain" --pdf "reports/interim_report.pdf"
+```
