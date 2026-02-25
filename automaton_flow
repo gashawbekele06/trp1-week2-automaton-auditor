@@ -1,0 +1,39 @@
+// Automaton Auditor Flow
+digraph {
+	rankdir=TB size="10,12"
+	START [label=START shape=ellipse]
+	Setup [label="Setup:
+Clone, PDF Ingest,
+Rubric Load" shape=box]
+	FanDetect [label="Fan-Out Detectives" shape=diamond]
+	RepoInv [label=RepoInvestigator shape=box]
+	DocAnal [label=DocAnalyst shape=box]
+	Vision [label=VisionInspector shape=box]
+	Agg [label="Fan-In Aggregator" shape=box]
+	FanJudges [label="Fan-Out Judges
+per Dimension" shape=diamond]
+	Prosec [label=Prosecutor shape=box]
+	Defense [label=Defense shape=box]
+	TechL [label=TechLead shape=box]
+	Synth [label="Synthesis:
+Deterministic Rules" shape=box]
+	Report [label="Markdown Audit Report" shape=box]
+	END [label=END shape=ellipse]
+	A -> B
+	B -> C
+	FanDetect -> RepoInv
+	FanDetect -> DocAnal
+	FanDetect -> Vision
+	D -> G
+	E -> G
+	F -> G
+	Agg -> FanJudges
+	FanJudges -> Prosec
+	FanJudges -> Defense
+	FanJudges -> TechL
+	I -> P
+	J -> P
+	K -> P
+	Synth -> Report
+	Report -> END
+}
