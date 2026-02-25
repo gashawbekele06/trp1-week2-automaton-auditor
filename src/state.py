@@ -72,3 +72,4 @@ class AgentState(TypedDict):
         List[JudicialOpinion], operator.add
     ]
     final_report: AuditReport
+    errors: Annotated[List[str], operator.add]
