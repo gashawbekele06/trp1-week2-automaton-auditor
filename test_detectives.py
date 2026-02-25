@@ -3,7 +3,8 @@ from src.graph import app
 
 # ← Replace with REAL values
 TEST_REPO = "https://github.com/gashawbekele06/trp1-week2-automaton-auditor"
-TEST_PDF  = "./sample-report.pdf"   # put a PDF file here or adjust path
+TEST_PDF  = "reports/Week2-Interim_report" \
+".pdf"   # put a PDF file here or adjust path
 
 result = app.invoke({
     "repo_url": TEST_REPO,
