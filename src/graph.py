@@ -9,7 +9,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from langgraph.graph import StateGraph, START, END
 from src.state import AgentState
 from src.nodes.detectives import repo_investigator, doc_analyst, vision_inspector
-from src.nodes.judges import regional_judge, chief_justice
+from src.nodes.judges import prosecutor_judge, defense_judge, techlead_judge
+from src.nodes.justice import chief_justice
 
 
 def evidence_aggregator(state: AgentState):
@@ -35,8 +36,10 @@ def build_interim_graph() -> StateGraph:
     # Layer 2: Aggregation
     workflow.add_node("EvidenceAggregator", evidence_aggregator)
     
-    # Layer 3: Judicial Layer (Stubbed)
-    workflow.add_node("RegionalJudge", regional_judge)
+    # Layer 3: Judicial Layer (Three persona judges + Chief Justice)
+    workflow.add_node("Prosecutor", prosecutor_judge)
+    workflow.add_node("Defense", defense_judge)
+    workflow.add_node("TechLead", techlead_judge)
     workflow.add_node("ChiefJustice", chief_justice)
 
     # --- Routing Logic ---
@@ -64,13 +67,20 @@ def build_interim_graph() -> StateGraph:
         "EvidenceAggregator",
         check_for_critical_failures,
         {
-            "CONTINUE": "RegionalJudge",
+            "CONTINUE": "Prosecutor",
             "FAILURE": END
         }
     )
 
-    # Judicial Flow
-    workflow.add_edge("RegionalJudge", "ChiefJustice")
+    # Fan-out to three judges in parallel from EvidenceAggregator
+    workflow.add_edge("EvidenceAggregator", "Prosecutor")
+    workflow.add_edge("EvidenceAggregator", "Defense")
+    workflow.add_edge("EvidenceAggregator", "TechLead")
+
+    # Fan-in: each judge routes to ChiefJustice
+    workflow.add_edge("Prosecutor", "ChiefJustice")
+    workflow.add_edge("Defense", "ChiefJustice")
+    workflow.add_edge("TechLead", "ChiefJustice")
     workflow.add_edge("ChiefJustice", END)
 
     return workflow.compile()
