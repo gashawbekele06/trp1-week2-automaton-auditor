@@ -3,22 +3,53 @@ import subprocess
 import tempfile
 import json
 import os
+from typing import Tuple, Optional
 from pydantic import BaseModel, Field
 
 def clone_repo_sandboxed(repo_url: str) -> tempfile.TemporaryDirectory:
-    """Clones a repo into a temporary directory for sandboxed analysis."""
+    """Clones a repo into a temporary directory for sandboxed analysis.
+    
+    Returns the TemporaryDirectory object (not just the name) so the caller
+    keeps a reference and the directory is not garbage-collected prematurely.
+    """
     temp_dir = tempfile.TemporaryDirectory()
     try:
-        result = subprocess.run(
-            ["git", "clone", repo_url, temp_dir.name],
+        subprocess.run(
+            ["git", "clone", "--depth=50", repo_url, temp_dir.name],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
+            timeout=120,
         )
         return temp_dir
     except subprocess.CalledProcessError as e:
         temp_dir.cleanup()
-        raise RuntimeError(f"Failed to clone repository: {e.stderr}")
+        raise RuntimeError(f"Failed to clone repository: {e.stderr.strip()}")
+    except subprocess.TimeoutExpired:
+        temp_dir.cleanup()
+        raise RuntimeError(f"Clone timed out after 120 seconds")
+
+
+def clone_or_use_local(repo_url: str) -> Tuple[str, bool, Optional[tempfile.TemporaryDirectory]]:
+    """Try to clone the repo; if network fails, fall back to the local project directory.
+
+    Returns:
+        (repo_path, is_temporary, temp_dir_handle): path to analyse, whether it is
+        temporary, and the TemporaryDirectory handle that MUST be kept alive by the
+        caller to prevent premature directory deletion.  `temp_dir_handle` is None
+        when using the local fallback.
+    """
+    try:
+        temp_dir = clone_repo_sandboxed(repo_url)
+        # Return the handle so the caller keeps a strong reference
+        return temp_dir.name, True, temp_dir
+    except RuntimeError:
+        # Network / DNS failure — fall back to current project root
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        if os.path.isdir(os.path.join(project_root, ".git")):
+            print("  ⚠ Clone failed — falling back to LOCAL repo for self-evaluation")
+            return project_root, False, None
+        raise
 
 def extract_git_history(repo_path: str) -> str:
     """Extracts git history in an atomic way."""
@@ -48,7 +79,12 @@ def analyze_graph_structure(repo_path: str) -> ArchitectureAnalysis:
     """Parses AST to determine structural characteristics of the agent."""
     analysis = ArchitectureAnalysis()
     
+    # Avoid scanning common virtualenv, cache, and site-package directories which
+    # may be present in some clone contexts or when falling back to local repo.
+    skip_indicators = (".venv", "venv", "site-packages", "__pycache__")
     for root, _, files in os.walk(repo_path):
+        if any(skip in root for skip in skip_indicators):
+            continue
         for file in files:
             if not file.endswith(".py"):
                 continue
