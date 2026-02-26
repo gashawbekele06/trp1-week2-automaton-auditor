@@ -79,7 +79,12 @@ def analyze_graph_structure(repo_path: str) -> ArchitectureAnalysis:
     """Parses AST to determine structural characteristics of the agent."""
     analysis = ArchitectureAnalysis()
     
+    # Avoid scanning common virtualenv, cache, and site-package directories which
+    # may be present in some clone contexts or when falling back to local repo.
+    skip_indicators = (".venv", "venv", "site-packages", "__pycache__")
     for root, _, files in os.walk(repo_path):
+        if any(skip in root for skip in skip_indicators):
+            continue
         for file in files:
             if not file.endswith(".py"):
                 continue
