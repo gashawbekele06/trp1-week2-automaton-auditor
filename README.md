@@ -1,53 +1,104 @@
-# The Automaton Auditor (Interim Submission)
-FDE Challenge Week 2: Orchestrating Deep LangGraph Swarms for Autonomous Governance
+# The Automaton Auditor — Final Submission
 
-The Automaton Auditor is a Deep LangGraph Swarm designed to autonomously governance code repositories. 
+This project implements a hierarchical Deep LangGraph swarm that audits Week 2 repositories and architectural reports.
 
-This repository reflects the **Interim Phase**, containing the Detective Layer. It utilizes isolated Detectives (`RepoInvestigator`, `DocAnalyst`, and `VisionInspector`) running in a Fan-Out pattern, parsing GitHub Repositories (AST verification, git log analysis) and PDF documentation. It extracts structured Pydantic `Evidence` objects and aggregates them via a central Fan-In node (`EvidenceAggregator`).
+High level:
+- Detectives (RepoInvestigator, DocAnalyst, VisionInspector) collect structured Pydantic `Evidence` objects.
+- Judges (Prosecutor, Defense, TechLead) run in parallel and emit `JudicialOpinion` objects.
+- ChiefJustice applies deterministic synthesis rules (security override, fact supremacy, dissent handling) and emits a final `AuditReport` serialized to Markdown and PDF.
 
-## Architecture (Interim)
+Repository layout (key files)
+- `src/state.py` — Pydantic models and TypedDict AgentState.
+- `src/tools/repo_tools.py` — sandboxed cloning, git history extraction, AST analysis.
+- `src/tools/doc_tools.py` — PDF ingestion and lightweight keyword/filepath extraction.
+- `src/nodes/detectives.py` — `repo_investigator`, `doc_analyst`, `vision_inspector`.
+- `src/nodes/judges.py` — `prosecutor_judge`, `defense_judge`, `techlead_judge` (structured outputs / stubbed LLM bindings).
+- `src/nodes/justice.py` — `chief_justice` deterministic synthesis and report generation.
+- `src/graph.py` — StateGraph wiring (detectives fan-out, evidence fan-in, judges fan-out, chief justice).
 
-- **Layer 1: Detectives** execute Forensics by collecting parsed evidence:
-  - `RepoInvestigator`: Clones the repo to a sandboxed `tempfile` and uses Python `ast` to verify `StateGraph` usage and typed reducers.
-  - `DocAnalyst`: Uses `docling` to chunk and semantically review PDF files.
-  - `VisionInspector`: Extensible node for diagram analysis.
-- **Layer 2: Synchronization** (`EvidenceAggregator`) enforces a Fan-In state synchronization, outputting the gathered proof locally.
-- *(Judges and ChiefJustice logic reserved for Final Submission).*
+Prerequisites
+- Python >= 3.12 (this repo uses 3.12 in pyproject)
+- `uv` (recommended) or use `pip` inside a venv
+- Git
+- Optional: `weasyprint`/`pandoc` to convert the final Markdown to PDF locally
 
-## Prerequisites
+Quick setup (recommended)
+1. Create and activate a virtual environment:
 
-Before setting up the project, ensure you have the following installed:
-
-- **[uv](https://docs.astral.sh/uv/)**: A fast Python package and project manager.
-- **Git**: Required for cloning target repositories for analysis.
-- **System Dependencies**: Some dependencies (like `docling`) may require standard build tools or specific libraries depending on your OS.
-
-## Setup Instructions
-
-This project uses `uv` for minimal, lightning-fast dependency management.
-
-1. Ensure `uv` is installed globally.
-2. Initialize environment:
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2. Install dependencies (using `uv` if you have it):
+
+```bash
+# with uv
 uv sync
+# or with pip (inside venv)
+python -m pip install -e .
 ```
-3. **Setup Environment Variables**:
-   Copy the example file and fill in your credentials:
-   ```bash
-   cp .env.example .env
-   ```
 
-   | Variable | Description | Required |
-   | :--- | :--- | :--- |
-   | `OPENAI_API_KEY` | Your OpenAI API key for LLM analysis. | Yes |
-   | `LANGCHAIN_TRACING_V2` | Enable LangSmith tracing (set to `true`). | No |
-   | `LANGCHAIN_API_KEY` | Your LangSmith API key. | No |
-   | `LANGCHAIN_PROJECT` | Project name for LangSmith. | No |
-
-## Running the Swarm
-
-The interim graph requires a target `--repo` and target `--pdf`.
+3. Copy `.env.example` and fill keys:
 
 ```bash
-uv run python src/graph.py --repo "https://github.com/gashawbekele06/trp1-week2-automaton-auditor.git" --pdf "reports/interim_report.pdf"
+cp .env.example .env
+# set OPENAI_API_KEY and optional LangSmith settings
 ```
+
+Run the auditor
+
+Interim (detectives only):
+
+```bash
+uv run python src/graph.py --repo "https://github.com/<target_repo>" --pdf "reports/interim-report..pdf"
+```
+
+Final (use your final PDF report):
+
+```bash
+uv run python src/graph.py --repo "https://github.com/<target_repo>" --pdf "reports/final-report.pdf"
+```
+
+Outputs
+- `audit/report_onself_generated/audit_report.md` — structured per-criterion audit (machine-readable, Pydantic-backed objects serialized as Markdown).
+- `audit/report_onself_generated/final_report.md` — human-facing final report ready for PDF conversion.
+- `reports/final_report_generated.pdf` — generated PDF (committed) from `final_report.md`.
+
+Convert `final_report.md` to PDF locally
+
+Option A — weasyprint (recommended for HTML rendering):
+
+```bash
+python -m pip install weasyprint markdown2
+python - <<'PY'
+import markdown2
+from weasyprint import HTML
+html = markdown2.markdown(open('audit/report_onself_generated/final_report.md').read())
+HTML(string=html).write_pdf('reports/final_report_generated.pdf')
+print('Wrote reports/final_report_generated.pdf')
+PY
+```
+
+Option B — pandoc (if available):
+
+```bash
+pandoc audit/report_onself_generated/final_report.md -o reports/final_report_generated.pdf
+```
+
+Notes & limitations
+- The repository includes heuristic (local) judge implementations to keep the agent self-contained. You can upgrade the judges to real LLM-backed personas by replacing the stubs in `src/nodes/judges.py` with calls to an LLM and using `.with_structured_output(JudicialOpinion)`.
+- The environment used for automated testing here may not allow installing system packages; if PDF conversion fails locally, run conversion in your development environment.
+
+Docker (optional)
+- You can containerize the runtime; a Dockerfile is recommended but not included by default. If you want, I can add one.
+
+How to extend
+- Add more forensic checks in `src/tools/repo_tools.py` (AST-based proofs are preferred over regex).
+- Improve `doc_tools.ingest_pdf` with OCR or image extraction for richer diagram analysis.
+- Replace heuristic judge logic with LLM calls bound to `JudicialOpinion` using `.with_structured_output()` for stronger dialectical opinions.
+
+Contact / License
+- MIT. See `LICENSE` for details.
+
+Enjoy — run the auditor against peers' repos and iterate on the MinMax loop.
