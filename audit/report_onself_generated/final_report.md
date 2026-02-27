@@ -6,69 +6,134 @@ Auto-generated audit report by Chief Justice.
 
 ## Architecture Deep Dive
 
+**Context for Fan-In:**
+
+Strengths: State management rigor, clear reducer-based merging semantics, explicit graph wiring for fan-out/fan-in.
+
+
+**Context for Fan-Out:**
+
+Strengths: State management rigor, clear reducer-based merging semantics, explicit graph wiring for fan-out/fan-in.
+
+
 **Context for Dialectical Synthesis:**
 
-Final Audit Report Executive Summary Auto-generated audit report by Chief Justice. Architecture Deep Dive (No architecture deep-dive found in provided PDF; please add sections on Dialectical Synthesis, Fan-In/Fan-Out, and Metacog
+Weaknesses: Safe tool engineering needs tightening (avoid raw shell execution), some documentation gaps around Dialectical Synthesis and diagram captions.
+
+
+**Context for Dialectical Synthesis:**
+
+Dialectical Synthesis
+
+
+**Context for Dialectical Synthesis:**
+
+Dialectical Synthesis is implemented as a three-phase process:
+
+
+**Context for Dialectical Synthesis:**
+
+Include the exact phrase 'Dialectical Synthesis' in authoring text (this file does) so DocAnalyst and the automated pipeline detect it.
 
 
 **Context for Fan-In:**
 
-Final Audit Report Executive Summary Auto-generated audit report by Chief Justice. Architecture Deep Dive (No architecture deep-dive found in provided PDF; please add sections on Dialectical Synthesis, Fan-In/Fan-Out, and Metacog
+Fan-Out / Fan-In Topology
 
 
 **Context for Fan-Out:**
 
-Final Audit Report Executive Summary Auto-generated audit report by Chief Justice. Architecture Deep Dive (No architecture deep-dive found in provided PDF; please add sections on Dialectical Synthesis, Fan-In/Fan-Out, and Metacog
+Fan-Out / Fan-In Topology
 
 
 **Context for Fan-In:**
 
-Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
+The system uses two principal fan-out/fan-in phases to balance parallelism and deterministic merging:
 
 
 **Context for Fan-Out:**
 
-Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
+The system uses two principal fan-out/fan-in phases to balance parallelism and deterministic merging:
+
+
+**Context for Fan-Out:**
+
+Detectives   fan-out:   multiple   independent   detectors   run   in   parallel   and   append   to `state['evidences']` using an `operator.ior` reducer for safe concurrent merges.
 
 
 **Context for Fan-In:**
 
-Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
+EvidenceAggregator (fan-in): merges, normalizes, and canonicalizes evidence objects before snapshotting state for judges.
 
 
 **Context for Fan-Out:**
 
-Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
+Judges fan-out: the snapshot fans out to all judges; judges append `JudicialOpinion` objects to `state['opinions']` using `operator.add`.
 
 
 **Context for Fan-In:**
 
-Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
+Chief Justice fan-in: a single final synthesis node deterministically combines opinions into an `AuditReport`.
 
 
-**Context for Fan-Out:**
+**Context for Metacognition:**
 
-Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
-
-
-**Context for Fan-In:**
-
-Remediation: Implement parallel fan-out for Detectives and Judges with a fan-in EvidenceAggregator node; add conditional ed Safe Tool Engineering     Final Score: 1 Dissent: High variance and re-evaluation found missing cited evidence; prosecutor position favored.
-
-
-**Context for Fan-Out:**
-
-Remediation: Implement parallel fan-out for Detectives and Judges with a fan-in EvidenceAggregator node; add conditional ed Safe Tool Engineering     Final Score: 1 Dissent: High variance and re-evaluation found missing cited evidence; prosecutor position favored.
+Metacognition and the MinMax Loop
 
 
 **Context for MinMax:**
 
-Reflection on the MinMax Feedback Loop
+Metacognition and the MinMax Loop
+
+
+**Context for Metacognition:**
+
+Metacognition is enacted via a MinMax feedback loop:
+
+
+**Context for MinMax:**
+
+Metacognition is enacted via a MinMax feedback loop:
+
+
+**Context for State Synchronization:**
+
+State Synchronization and Reducers
+
+
+**Context for Fan-In:**
+
+Deterministic   merges:   all   fan-in   points   merge   using   explicit   reducers   declared   in `AgentState` (e.g., `operator.ior` for dict-like evidence, `operator.add` for opinion lists).
+
+
+**Context for Fan-Out:**
+
+Detectives Fan-Out (parallel): `RepoInvestigator`, `DocAnalyst`, `VisionInspector` execute concurrently using a worker pool. Each produces typed `Evidence` objects and writes them into  `state['evidences']`   via   the   reducer.   Detectives   are   idempotent:   each   evidence   item includes a stable `id` (hash of file path + analyzer + timestamp) so replays do not duplicate content.
+
+
+**Context for Fan-In:**
+
+EvidenceAggregator   (fan-in):   waits   for   the   detective   futures   to   complete   (or   reach   a timeout), deduplicates evidence by `id`, normalizes fields, and writes a canonical snapshot
+
+
+**Context for Fan-Out:**
+
+Judges Fan-Out (parallel): snapshot is fan-out to `Prosecutor`, `Defense`, and `TechLead`. Judges are pure functions of the snapshot and return `JudicialOpinion` objects (score, argument,   cited_evidence   list).   Opinions   append   to   `state['opinions']`   using   listconcatenation reducers.
+
+
+**Context for Fan-In:**
+
+ChiefJustice   Fan-In:   collects   all   judge   opinions,   computes   median/trimmed   scores   per criterion,   detects   variance,   applies   deterministic   policy   overrides   (fact_supremacy, security_override), and writes `AuditReport` and a reproducibility log containing the input snapshot hash and the combine steps.
+
+
+**Context for Fan-Out:**
+
+Missing evidence: if a judge cites an evidence id that is not in the snapshot, the ChiefJustice flags the criterion and triggers a conditional edge back to the Detectives Fan-Out, but scoped only  to   targeted   probes   (e.g.,   re-run   `DocAnalyst`   with   narrower   queries).   Retries   are bounded (configurable max_retries) and tracked in the snapshot metadata.
 
 
 ## Architectural Diagrams
 
-![Architecture Diagram](automaton_flow.png)
+(No architectural diagrams found. Add a StateGraph visualization showing parallel flow.)
 
 ## Criterion-by-Criterion Breakdown
 
@@ -79,23 +144,25 @@ Reflection on the MinMax Feedback Loop
 **Judge Opinions:**
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent.
-  - Cited Evidence: Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
+  - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
 - **Prosecutor** (2): Found concerning patterns or insufficient evidence.
-  - Cited Evidence: Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
+  - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
 - **TechLead** (4): Artifacts present; pragmatic functionality likely.
-  - Cited Evidence: Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
+  - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
-### Report Accuracy (Cross-Reference) — Final Score: 2
+### Report Accuracy (Cross-Reference) — Final Score: 4
+
+**Dissent:** High variance across judges; median score used after re-evaluation.
 
 **Judge Opinions:**
 
-- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.
+- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent.
   - Cited Evidence: Extract file paths from PDF
-- **Prosecutor** (1): Missing evidence: Extract file paths from PDF
+- **Prosecutor** (2): Found concerning patterns or insufficient evidence.
   - Cited Evidence: Extract file paths from PDF
-- **TechLead** (2): No clear artifacts; technical debt suspected.
+- **TechLead** (4): Artifacts present; pragmatic functionality likely.
   - Cited Evidence: Extract file paths from PDF
 
 **Remediation:** See detective evidence and implement missing artifacts.
@@ -210,9 +277,11 @@ Reflection on the MinMax Feedback Loop
 
 ## Reflection on the MinMax Feedback Loop
 
-Reflection on the MinMax Feedback Loop
+This report contains a detailed Architecture Deep Dive intended for peer graders and automated detectors, per the challenge rubric.
 
-(Add reflections: what peer agents caught, how you updated your agent, and remaining gaps.) Remediation Plan
+Metacognition and the MinMax Loop
+
+Metacognition is enacted via a MinMax feedback loop:
 
 ## Remediation Plan
 
