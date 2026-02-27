@@ -9,41 +9,39 @@ High level:
 
 Project structure (full tree)
 
-TRP1-WEEK2-AUTOMATON-AUDITOR/                                      
+TRP1-WEEK2-AUTOMATON-AUDITOR/
 ├── audit/
-│   ├── report_bypeer_received/     
-│   ├── report_onpeer_generated/    
-│   ├── report_onself_generated/    
+│   ├── report_bypeer_received/       # Reports received from peers
+│   ├── report_onpeer_generated/      # Reports generated about peers
+│   ├── report_onself_generated/      # Self-evaluation reports
 │   └── reports/
-│       ├── final_report.md         
-│       ├── final_report.pdf        
-│       └── interim-report.pdf      
+│       ├── final_report.md           # Final audit report (markdown)
+│       ├── final_report.pdf          # Final audit report (PDF)
+│       └── interim-report.pdf        # Interim / progress report
 ├── src/
-│   ├── pycache/
 │   ├── nodes/
 │   │   ├── init.py
-│   │   ├── detectives.py
-│   │   ├── judges.py
-│   │   └── justice.py
+│   │   ├── detectives.py             # Detective node logic
+│   │   ├── judges.py                 # Judge node logic
+│   │   └── justice.py                # Justice / final decision node
 │   ├── tools/
 │   │   ├── init.py
-│   │   ├── doc_tools.py
-│   │   ├── repo_tools.py                     
+│   │   ├── doc_tools.py              # Document processing utilities
+│   │   └── repo_tools.py             # Repository analysis utilities
 │   ├── init.py
-│   ├── graph.py
-│   └── state.py
-├── tests/                          
-├── .env.example                         
+│   ├── graph.py                      # Graph / workflow logic
+│   └── state.py                      # Shared state management
+├── tests/                            # Unit & integration tests
+├── .env.example                      # Template for environment variables
 ├── .gitignore
 ├── .python-version
 ├── Dockerfile
 ├── LICENSE
-├── main.py                         
-├── pyproject.toml                  
+├── main.py                           # Main entry point
+├── pyproject.toml                    # Project metadata & dependencies
 ├── README.md
-├── rubrics.json                    
-├── uv.lock                         
-└── LICENSE
+├── rubrics.json                      # Evaluation criteria / scoring rubrics
+└── uv.lock                           # Lockfile (uv / rye / hatch / pip-tools)
 
 Repository layout (key files)
 - `src/state.py` — Pydantic models and TypedDict AgentState.
