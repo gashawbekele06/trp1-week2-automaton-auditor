@@ -1,17 +1,18 @@
 # Audit Report
 
-Repo: https://github.com/gashawbekele06/trp1-week2-automaton-auditor.git
+Repo: https://github.com/<target>
 
-Overall Score: 3.0
+Overall Score: 3.2
 
 ## Criteria
 
 ### Theoretical Depth (Documentation) (theoretical_depth)
-Final Score: 2  
+Final Score: 4  
+Dissent: High variance across judges; median score used after re-evaluation.
 Judge Opinions:
-- Defense: 3 — No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.
-- Prosecutor: 1 — Missing evidence: Determine theoretical depth
-- TechLead: 2 — No clear artifacts; technical debt suspected.
+- Defense: 5 — Evidence of intent and partial implementation found; reward effort and intent.
+- Prosecutor: 2 — Found concerning patterns or insufficient evidence.
+- TechLead: 4 — Artifacts present; pragmatic functionality likely.
 Remediation:
 See detective evidence and implement missing artifacts.
 
