@@ -8,7 +8,7 @@ High level:
 - ChiefJustice applies deterministic synthesis rules (security override, fact supremacy, dissent handling) and emits a final `AuditReport` serialized to Markdown and PDF.
 
 Project structure (full tree)
-
+``` 
 TRP1-WEEK2-AUTOMATON-AUDITOR/
 ├── audit/
 │   ├── report_bypeer_received/       # Reports received from peers
@@ -42,7 +42,7 @@ TRP1-WEEK2-AUTOMATON-AUDITOR/
 ├── README.md
 ├── rubrics.json                      # Evaluation criteria / scoring rubrics
 └── uv.lock                           # Lockfile (uv / rye / hatch / pip-tools)
-
+```
 Repository layout (key files)
 - `src/state.py` — Pydantic models and TypedDict AgentState.
 - `src/tools/repo_tools.py` — sandboxed cloning, git history extraction, AST analysis.
