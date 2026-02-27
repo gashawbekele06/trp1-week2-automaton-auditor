@@ -91,7 +91,53 @@ Notes & limitations
 - The environment used for automated testing here may not allow installing system packages; if PDF conversion fails locally, run conversion in your development environment.
 
 Docker (optional)
-- You can containerize the runtime; a Dockerfile is recommended but not included by default. If you want, I can add one.
+
+This repository now includes a `Dockerfile` to build a containerized runtime for the auditor. The container installs the project from `pyproject.toml` and exposes a CLI entrypoint for `src/graph.py`.
+
+Build the image locally:
+
+```bash
+docker build -t automaton-auditor:latest .
+```
+
+Run the auditor in a container (example):
+
+```bash
+# Run interactively and map the workspace so reports and audit outputs are persisted locally
+docker run --rm -it \
+	-e OPENAI_API_KEY=$OPENAI_API_KEY \
+	-v "$PWD":/app \
+	automaton-auditor:latest \
+	python src/graph.py --repo "https://github.com/<target_repo>" --pdf "/app/reports/final_report.pdf"
+```
+
+Notes:
+- Mount the workspace (`-v "$PWD":/app`) so generated reports (`/app/audit/` and `/app/reports/`) are available on the host.
+- Pass required env vars (e.g., `OPENAI_API_KEY`) into the container via `-e` or an env file.
+- If you want the container to generate the PDF, ensure system libraries for PDF rendering are present or perform PDF conversion on the host (we provide `final_report.md`).
+
+LangSmith tracing (optional, recommended for grading)
+
+This project can emit LangSmith traces for the full reasoning loop (detectives → judges → Chief Justice). To enable tracing, set the tracing flag and provide a LangSmith/LangChain API key in your environment before running the auditor.
+
+Required environment variables (example):
+
+```bash
+export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=<your_langchain_or_langsmith_api_key>
+# Optional: set a project name to group runs
+export LANGCHAIN_PROJECT=automaton-auditor
+```
+
+Run the auditor as usual; when tracing is enabled the `src/graph.py` runner will attempt to create a LangSmith Run and will print a best-effort URL after completion, e.g.:
+
+```
+LangSmith run available at: https://app.langchain.com/runs/<run-id>
+```
+
+If you don't see a URL printed, ensure the API key and tracing flag are set and that the host can reach LangSmith endpoints. Traces will appear in the LangChain / LangSmith dashboard under the configured project name.
+
+Privacy note: traces may include inputs/outputs and metadata. Only enable tracing when you are comfortable with uploading run artifacts to your LangSmith project.
 
 How to extend
 - Add more forensic checks in `src/tools/repo_tools.py` (AST-based proofs are preferred over regex).
