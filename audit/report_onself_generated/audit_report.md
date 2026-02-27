@@ -1,6 +1,6 @@
 # Audit Report
 
-Repo: https://github.com/<target>
+Repo: https://github.com/gashawbekele06/trp1-week2-automaton-auditor.git
 
 Overall Score: 3.4
 
