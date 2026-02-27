@@ -90,6 +90,30 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
 
+    # Optional LangSmith tracing setup. When `LANGCHAIN_TRACING_V2` is set to
+    # a truthy value and an API key is present, configure LangSmith to collect
+    # a run representing this auditor execution. This creates a root RunTree
+    # that will be ended after the graph invocation, which LangSmith will
+    # persist (if client/API key/config is available).
+    try:
+        import langsmith.run_trees as ls_run_trees
+        import langsmith as ls
+
+        ls_enabled = os.getenv("LANGCHAIN_TRACING_V2")
+        ls_project = os.getenv("LANGCHAIN_PROJECT") or os.getenv("LANGSMITH_PROJECT")
+        if ls_enabled and ls_enabled.lower() in ("1", "true", "yes"):
+            try:
+                ls_run_trees.configure(enabled=True, project_name=ls_project)
+                print(f"LangSmith tracing enabled (project={ls_project})")
+            except Exception as e:
+                print(f"LangSmith configure failed: {e}")
+        else:
+            # Explicitly disable tracing by default
+            ls_run_trees.configure(enabled=False)
+    except Exception:
+        # If langsmith isn't installed or available, continue without tracing.
+        pass
+
     parser = argparse.ArgumentParser(description="Run the Interim Automaton Auditor Swarm.")
     parser.add_argument("--repo", type=str, required=True, help="GitHub repository URL to evaluate")
     parser.add_argument("--pdf", type=str, required=True, help="Path to the PDF architectural report")
@@ -110,6 +134,35 @@ if __name__ == "__main__":
     print(f"Starting Interim Automaton Auditor for {args.repo}...")
     app = build_interim_graph()
 
+    # If LangSmith RunTree is configured, create a root run and attach inputs/metadata
+    run_tree = None
+    try:
+        import langsmith.run_trees as ls_run_trees
+        # Create a root RunTree capturing inputs
+        run_tree = ls_run_trees.RunTree(name=f"Automaton Audit - {args.repo}")
+        run_tree.add_inputs({"repo_url": args.repo, "pdf_path": args.pdf})
+        run_tree.add_event({"name": "start", "message": "Starting audit run"})
+    except Exception:
+        run_tree = None
+
     final_output = app.invoke(initial_state)
     print("\n--- INTERIM EXECUTION COMPLETE ---")
     print("Collected Evidence Keys:", list(final_output.get("evidences", {}).keys()))
+
+    # Finalize LangSmith run: attach outputs and end the run so it's uploaded.
+    try:
+        if run_tree is not None:
+            # Attach some high-level outputs
+            run_tree.add_outputs({"evidence_keys": list(final_output.get("evidences", {}).keys())})
+            run_tree.add_event({"name": "end", "message": "Audit run completed"})
+            run_tree.end()
+            # Attempt to print a web link to the run (best-effort)
+            client = run_tree.client
+            try:
+                base = client._host_url
+                run_url = f"{base}/runs/{run_tree.id}"
+                print(f"LangSmith run available at: {run_url}")
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"LangSmith run finalization failed: {e}")
