@@ -1,6 +1,7 @@
 import os
 from typing import Dict, List
 from src.state import AgentState, JudicialOpinion, Evidence
+from typing import Optional
 
 # Attempt to initialize an LLM structured-output binding if an API key is available.
 # This call to `with_structured_output(JudicialOpinion)` is intentionally present so
@@ -30,6 +31,38 @@ def _collect_dimension_evidence(evidences: Dict[str, List[Evidence]], dim_id: st
     return evidences.get(dim_id, []) if evidences else []
 
 
+def _find_dimension_meta(rubric_dimensions: List[Dict], dim_id: str) -> Optional[Dict]:
+    if not rubric_dimensions:
+        return None
+    for d in rubric_dimensions:
+        if d.get("id") == dim_id:
+            return d
+    return None
+
+
+def _validate_and_append(opinion_data: Dict, out_list: List[JudicialOpinion], state: AgentState, judge_name: str):
+    """Validate a JudicialOpinion dict against the Pydantic schema.
+
+    On validation failure, mark the state for judge retry and record an error.
+    """
+    try:
+        # Construct Pydantic model to validate fields/types
+        opinion = JudicialOpinion(**opinion_data)
+        out_list.append(opinion)
+    except Exception as e:
+        # Record the error and request a judge-level retry
+        errs = state.get("errors", []) or []
+        msg = f"Judge {judge_name} produced invalid output for criterion {opinion_data.get('criterion_id')}: {e}"
+        errs.append(msg)
+        state["errors"] = errs
+        # Increment retry counter
+        counts = state.get("retry_counts", {}) or {}
+        counts["judges"] = counts.get("judges", 0) + 1
+        state["retry_counts"] = counts
+        state["needs_judge_retry"] = True
+        print(msg)
+
+
 def prosecutor_judge(state: AgentState) -> Dict:
     """Adversarial persona: looks for security flaws, hallucinations, and orchestration fraud.
 
@@ -38,6 +71,7 @@ def prosecutor_judge(state: AgentState) -> Dict:
     print("--- PROSECUTOR ---")
     out: List[JudicialOpinion] = []
     evidences = state.get("evidences", {})
+    rubric = state.get("rubric_dimensions", [])
 
     # If an LLM structured output binder is available we would invoke the model here
     # to produce strict `JudicialOpinion` objects. We keep a deterministic heuristic
@@ -47,6 +81,11 @@ def prosecutor_judge(state: AgentState) -> Dict:
         score = 3
         argument_lines = []
         cited = []
+
+        # Add rubric-aware guidance into the persona reasoning
+        meta = _find_dimension_meta(rubric, dim_id)
+        if meta:
+            argument_lines.append(f"(Rubric: {meta.get('name')} - {meta.get('forensic_instruction')[:200]}...)")
 
         for ev in ev_list:
             cited.append(ev.goal)
@@ -63,13 +102,15 @@ def prosecutor_judge(state: AgentState) -> Dict:
 
         argument = "; ".join(argument_lines) if argument_lines else "Found concerning patterns or insufficient evidence."
 
-        out.append(JudicialOpinion(
-            judge="Prosecutor",
-            criterion_id=dim_id,
-            score=score,
-            argument=argument,
-            cited_evidence=cited,
-        ))
+        opinion_data = {
+            "judge": "Prosecutor",
+            "criterion_id": dim_id,
+            "score": score,
+            "argument": argument,
+            "cited_evidence": cited,
+        }
+
+        _validate_and_append(opinion_data, out, state, "Prosecutor")
 
     return {"opinions": out}
 
@@ -95,25 +136,33 @@ def defense_judge(state: AgentState) -> Dict:
     print("--- DEFENSE ATTORNEY ---")
     out: List[JudicialOpinion] = []
     evidences = state.get("evidences", {})
+    rubric = state.get("rubric_dimensions", [])
 
     # Prefer LLM-structured outputs when available; otherwise use heuristics.
     for dim_id, ev_list in evidences.items():
         cited = [ev.goal for ev in ev_list]
+        meta = _find_dimension_meta(rubric, dim_id)
         # Reward presence of any positive evidence
         if any(ev.found for ev in ev_list):
             score = 5
             argument = "Evidence of intent and partial implementation found; reward effort and intent."
+            if meta:
+                argument += f" ({meta.get('name')}: {meta.get('success_pattern')[:120]}...)"
         else:
             score = 3
             argument = "No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere."
+            if meta:
+                argument += f" Consider forensic instruction: {meta.get('forensic_instruction')[:120]}..."
 
-        out.append(JudicialOpinion(
-            judge="Defense",
-            criterion_id=dim_id,
-            score=score,
-            argument=argument,
-            cited_evidence=cited,
-        ))
+        opinion_data = {
+            "judge": "Defense",
+            "criterion_id": dim_id,
+            "score": score,
+            "argument": argument,
+            "cited_evidence": cited,
+        }
+
+        _validate_and_append(opinion_data, out, state, "Defense")
 
     return {"opinions": out}
 
@@ -126,11 +175,13 @@ def techlead_judge(state: AgentState) -> Dict:
     print("--- TECH LEAD ---")
     out: List[JudicialOpinion] = []
     evidences = state.get("evidences", {})
+    rubric = state.get("rubric_dimensions", [])
 
     for dim_id, ev_list in evidences.items():
         cited = [ev.goal for ev in ev_list]
         score = 3
         reasons = []
+        meta = _find_dimension_meta(rubric, dim_id)
 
         # Check for clear engineering wins
         for ev in ev_list:
@@ -153,12 +204,18 @@ def techlead_judge(state: AgentState) -> Dict:
                 score = 2
                 reasons.append("No clear artifacts; technical debt suspected.")
 
-        out.append(JudicialOpinion(
-            judge="TechLead",
-            criterion_id=dim_id,
-            score=score,
-            argument="; ".join(reasons),
-            cited_evidence=cited,
-        ))
+        # Strengthen reasoning with rubric guidance
+        if meta:
+            reasons.insert(0, f"Rubric: {meta.get('name')}. Guidance: {meta.get('forensic_instruction')[:120]}...")
+
+        opinion_data = {
+            "judge": "TechLead",
+            "criterion_id": dim_id,
+            "score": score,
+            "argument": "; ".join(reasons),
+            "cited_evidence": cited,
+        }
+
+        _validate_and_append(opinion_data, out, state, "TechLead")
 
     return {"opinions": out}
