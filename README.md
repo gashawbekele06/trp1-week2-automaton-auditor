@@ -9,38 +9,41 @@ High level:
 
 Project structure (full tree)
 
-```
-audit/
-	report_bypeer_received/
-	report_onpeer_generated/
-	report_onself_generated/
-reports/
-src/
-	__init__.py
-	graph.py
-	state.py
-	nodes/
-		__init__.py
-		detectives.py
-		judges.py
-		justice.py
-	tools/
-		__init__.py
-		doc_tools.py
-		repo_tools.py
-
-automaton_flow
-Dockerfile
-graph.ipynb
-LICENSE
-main.py
-pyproject.toml
-README.md
-rubric.json
-test_detectives.py
-test_openai_key.py
-tests/
-```
+TRP1-WEEK2-AUTOMATON-AUDITOR/                                      
+├── audit/
+│   ├── report_bypeer_received/     
+│   ├── report_onpeer_generated/    
+│   ├── report_onself_generated/    
+│   └── reports/
+│       ├── final_report.md         
+│       ├── final_report.pdf        
+│       └── interim-report.pdf      
+├── src/
+│   ├── pycache/
+│   ├── nodes/
+│   │   ├── init.py
+│   │   ├── detectives.py
+│   │   ├── judges.py
+│   │   └── justice.py
+│   ├── tools/
+│   │   ├── init.py
+│   │   ├── doc_tools.py
+│   │   ├── repo_tools.py                     
+│   ├── init.py
+│   ├── graph.py
+│   └── state.py
+├── tests/                          
+├── .env.example                         
+├── .gitignore
+├── .python-version
+├── Dockerfile
+├── LICENSE
+├── main.py                         
+├── pyproject.toml                  
+├── README.md
+├── rubrics.json                    
+├── uv.lock                         
+└── LICENSE
 
 Repository layout (key files)
 - `src/state.py` — Pydantic models and TypedDict AgentState.
