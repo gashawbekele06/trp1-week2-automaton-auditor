@@ -7,6 +7,41 @@ High level:
 - Judges (Prosecutor, Defense, TechLead) run in parallel and emit `JudicialOpinion` objects.
 - ChiefJustice applies deterministic synthesis rules (security override, fact supremacy, dissent handling) and emits a final `AuditReport` serialized to Markdown and PDF.
 
+Project structure (full tree)
+
+```
+audit/
+	report_bypeer_received/
+	report_onpeer_generated/
+	report_onself_generated/
+reports/
+src/
+	__init__.py
+	graph.py
+	state.py
+	nodes/
+		__init__.py
+		detectives.py
+		judges.py
+		justice.py
+	tools/
+		__init__.py
+		doc_tools.py
+		repo_tools.py
+
+automaton_flow
+Dockerfile
+graph.ipynb
+LICENSE
+main.py
+pyproject.toml
+README.md
+rubric.json
+test_detectives.py
+test_openai_key.py
+tests/
+```
+
 Repository layout (key files)
 - `src/state.py` — Pydantic models and TypedDict AgentState.
 - `src/tools/repo_tools.py` — sandboxed cloning, git history extraction, AST analysis.
