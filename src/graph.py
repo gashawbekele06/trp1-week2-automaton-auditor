@@ -10,6 +10,7 @@ from langgraph.graph import StateGraph, START, END
 import hashlib
 from src.state import AgentState
 from src.nodes.detectives import repo_investigator, doc_analyst, vision_inspector
+from src.tools.repo_tools import clone_or_use_local
 from src.nodes.judges import prosecutor_judge, defense_judge, techlead_judge
 from src.nodes.justice import chief_justice
 
@@ -213,21 +214,48 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the Interim Automaton Auditor Swarm.")
     parser.add_argument("--repo", type=str, required=True, help="GitHub repository URL to evaluate")
     parser.add_argument("--pdf", type=str, required=True, help="Path to the PDF architectural report")
+    parser.add_argument("--mode", type=str, choices=["self", "peer"], required=False,
+                        help="(optional) force evaluation mode: 'self' or 'peer'. If omitted the runner will attempt to infer mode from cloning behavior.")
     args = parser.parse_args()
 
     with open("rubric.json", "r", encoding="utf-8") as f:
          rubric_data = json.load(f)
 
+    # Try to clone the repo; if cloning fails, clone_or_use_local will fall back
+    # to the local workspace. Keep a handle to any temporary clone so it isn't
+    # garbage-collected while the run is active. The optional --mode flag can
+    # also force 'self' or 'peer' evaluation and will override auto-detection.
+    temp_clone_handle = None
+    try:
+        repo_path, is_temporary, temp_clone_handle = clone_or_use_local(args.repo)
+    except Exception:
+        # If clone_or_use_local raises, fall back to the provided URL string
+        repo_path = args.repo
+        is_temporary = False
+
+    # If user supplied explicit mode, override detection
+    if getattr(args, "mode", None) is not None:
+        forced_self = True if args.mode == "self" else False
+        is_self = forced_self
+        print(f"Evaluation mode forced by CLI: {'self' if is_self else 'peer'}")
+    else:
+        is_self = not bool(is_temporary)
+
     initial_state = {
         "repo_url": args.repo,
+        "repo_path": repo_path,
+        "is_self_audit": is_self,
         "pdf_path": args.pdf,
         "rubric_dimensions": rubric_data["dimensions"],
         "synthesis_rules": rubric_data.get("synthesis_rules", {}),
         "evidences": {},
         "opinions": []
     }
-
+    # Startup logging to help verify mode detection and routing
     print(f"Starting Interim Automaton Auditor for {args.repo}...")
+    print(f"  -> Resolved repo_path: {repo_path}")
+    print(f"  -> Temporary clone in use: {bool(is_temporary)}")
+    print(f"  -> Effective mode (is_self_audit): {is_self}")
     app = build_interim_graph()
 
     # If LangSmith RunTree is configured, create a root run and attach inputs/metadata
