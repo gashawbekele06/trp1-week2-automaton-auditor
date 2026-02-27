@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600" viewBox="0 0 1200 1600">
+  <style>
+    .box { fill:#eef2ff; stroke:#9aa7ff; stroke-width:2; rx:8; }
+    .diamond { fill:#f0f6ff; stroke:#9aa7ff; stroke-width:2; }
+    .text { font-family: Arial, Helvetica, sans-serif; font-size:14px; fill:#222; }
+    .title { font-size:16px; font-weight:700 }
+    .small { font-size:12px }
+    .dash { stroke:#666; stroke-width:1.5; stroke-dasharray:6 4; fill:none }
+    .arrow { stroke:#333; stroke-width:2; marker-end:url(#arrowhead); fill:none }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- START -->
+  <rect x="520" y="20" width="160" height="44" class="box" />
+  <text x="600" y="50" text-anchor="middle" class="text title">START</text>
+
+  <!-- Setup box -->
+  <rect x="360" y="90" width="480" height="64" class="box" />
+  <text x="600" y="132" text-anchor="middle" class="text">Setup: Clone, PDF Ingest, Rubric Load</text>
+  <line x1="600" y1="64" x2="600" y2="90" class="arrow" />
+
+  <!-- Detectives diamond -->
+  <rect x="360" y="190" width="480" height="80" class="diamond" rx="12"/>
+  <text x="600" y="235" text-anchor="middle" class="text title">Fan-Out Detectives</text>
+
+  <!-- Detectives boxes -->
+  <rect x="140" y="320" width="200" height="48" class="box" />
+  <text x="240" y="352" class="text" text-anchor="middle">RepoInvestigator</text>
+
+  <rect x="480" y="320" width="200" height="48" class="box" />
+  <text x="580" y="352" class="text" text-anchor="middle">DocAnalyst</text>
+
+  <rect x="820" y="320" width="200" height="48" class="box" />
+  <text x="920" y="352" class="text" text-anchor="middle">VisionInspector</text>
+
+  <!-- EvidenceAggregator -->
+  <rect x="450" y="420" width="300" height="56" class="box" />
+  <text x="600" y="456" class="text" text-anchor="middle">Fan-In Aggregator</text>
+
+  <!-- Arrows from detectives to aggregator -->
+  <path d="M240 368 L240 420" class="arrow" />
+  <path d="M580 368 L600 420" class="arrow" />
+  <path d="M920 368 L760 420" class="arrow" />
+
+  <!-- Judges diamond -->
+  <rect x="360" y="520" width="480" height="100" class="diamond" rx="12" />
+  <text x="600" y="570" text-anchor="middle" class="text title">Fan-Out Judges per Dimension</text>
+
+  <!-- Judges boxes -->
+  <rect x="160" y="660" width="200" height="48" class="box" />
+  <text x="260" y="692" class="text" text-anchor="middle">Prosecutor</text>
+
+  <rect x="460" y="660" width="200" height="48" class="box" />
+  <text x="560" y="692" class="text" text-anchor="middle">Defense</text>
+
+  <rect x="760" y="660" width="200" height="48" class="box" />
+  <text x="860" y="692" class="text" text-anchor="middle">TechLead</text>
+
+  <!-- Synthesis -->
+  <rect x="420" y="740" width="360" height="56" class="box" />
+  <text x="600" y="776" class="text" text-anchor="middle">Synthesis: Deterministic Rules</text>
+
+  <!-- ChiefJustice and END -->
+  <rect x="480" y="820" width="240" height="56" class="box" />
+  <text x="600" y="856" class="text" text-anchor="middle">ChiefJustice</text>
+
+  <rect x="520" y="920" width="160" height="44" class="box" />
+  <text x="600" y="950" text-anchor="middle" class="text title">END</text>
+
+  <!-- Arrows connecting main flow -->
+  <path d="M600 270 L600 320" class="arrow" />
+  <path d="M600 476 L600 520" class="arrow" />
+  <path d="M600 620 L600 740" class="arrow" />
+  <path d="M600 796 L600 820" class="arrow" />
+  <path d="M600 876 L600 920" class="arrow" />
+
+  <!-- Retry flows (dashed) -->
+  <path d="M750 444 C780 460, 860 520, 920 600" class="dash" />
+  <text x="840" y="520" class="small">missing evidence → retry detectives</text>
+
+  <path d="M640 700 C700 740, 780 760, 840 780" class="dash" />
+  <text x="760" y="740" class="small">parse fail / variance → retry judges</text>
+
+</svg>
