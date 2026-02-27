@@ -1,0 +1,395 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 5 0 R 7 0 R 9 0 R 11 0 R ] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 2309 >>
+stream
+BT
+/F1 10 Tf
+50 750 Td
+() Tj
+0 -14 Td
+(Final Audit Report) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Executive Summary) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Auto-generated audit report by Chief Justice.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Architecture Deep Dive) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(\(No architecture deep-dive found in provided PDF; please add sections on Dialectical Synthesis, Fan-In/Fan-Out, and Metacognition.\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Architectural Diagrams) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+() Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Criterion-by-Criterion Breakdown) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Theoretical Depth \(Documentation\) — Final Score: 2) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(3\): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.) Tj
+0 -14 Td
+(- Cited Evidence: Determine theoretical depth) Tj
+0 -14 Td
+(- Prosecutor \(1\): Missing evidence: Determine theoretical depth) Tj
+0 -14 Td
+(- Cited Evidence: Determine theoretical depth) Tj
+0 -14 Td
+(- TechLead \(2\): No clear artifacts; technical debt suspected.) Tj
+0 -14 Td
+(- Cited Evidence: Determine theoretical depth) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Report Accuracy \(Cross-Reference\) — Final Score: 2) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(3\): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.) Tj
+0 -14 Td
+(- Cited Evidence: Extract file paths from PDF) Tj
+0 -14 Td
+(- Prosecutor \(1\): Missing evidence: Extract file paths from PDF) Tj
+0 -14 Td
+(- Cited Evidence: Extract file paths from PDF) Tj
+0 -14 Td
+(- TechLead \(2\): No clear artifacts; technical debt suspected.) Tj
+0 -14 Td
+(- Cited Evidence: Extract file paths from PDF) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Git Forensic Analysis — Final Score: 4) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Dissent: High variance across judges; median score used after re-evaluation.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(5\): Evidence of intent and partial implementation found; reward effort and intent.) Tj
+0 -14 Td
+ET
+
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 3263 >>
+stream
+BT
+/F1 10 Tf
+50 750 Td
+(- Cited Evidence: Extract Git History Progression) Tj
+0 -14 Td
+(- Prosecutor \(2\): Found concerning patterns or insufficient evidence.) Tj
+0 -14 Td
+(- Cited Evidence: Extract Git History Progression) Tj
+0 -14 Td
+(- TechLead \(4\): Artifacts present; pragmatic functionality likely.) Tj
+0 -14 Td
+(- Cited Evidence: Extract Git History Progression) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(State Management Rigor — Final Score: 5) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Dissent: High variance across judges; median score used after re-evaluation.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(5\): Evidence of intent and partial implementation found; reward effort and intent.) Tj
+0 -14 Td
+(- Cited Evidence: Verify State File Existence, Verify Pydantic/TypedDict usage, Verify Reducers) Tj
+0 -14 Td
+(- Prosecutor \(2\): Found concerning patterns or insufficient evidence.) Tj
+0 -14 Td
+(- Cited Evidence: Verify State File Existence, Verify Pydantic/TypedDict usage, Verify Reducers) Tj
+0 -14 Td
+(- TechLead \(5\): Proper reducers detected; good parallel safety.) Tj
+0 -14 Td
+(- Cited Evidence: Verify State File Existence, Verify Pydantic/TypedDict usage, Verify Reducers) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: Define AgentState with Pydantic or TypedDict and use Annotated reducers \(operator.add, operator.ior\) to avoid parallel overwrites.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Graph Orchestration Architecture — Final Score: 4) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Dissent: High variance across judges; median score used after re-evaluation.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(5\): Evidence of intent and partial implementation found; reward effort and intent.) Tj
+0 -14 Td
+(- Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns) Tj
+0 -14 Td
+(- Prosecutor \(2\): Found concerning patterns or insufficient evidence.) Tj
+0 -14 Td
+(- Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns) Tj
+0 -14 Td
+(- TechLead \(4\): Artifacts present; pragmatic functionality likely.) Tj
+0 -14 Td
+(- Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: Implement parallel fan-out for Detectives and Judges with a fan-in EvidenceAggregator node; add conditional edges for failure handling.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Safe Tool Engineering — Final Score: 1) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Dissent: High variance and re-evaluation found missing cited evidence; prosecutor position favored.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(5\): Evidence of intent and partial implementation found; reward effort and intent.) Tj
+0 -14 Td
+(- Cited Evidence: Verify Git Sandboxing, Security Violations) Tj
+0 -14 Td
+(- Prosecutor \(1\): Missing evidence: Security Violations; Raw os.system usage detected: security risk) Tj
+0 -14 Td
+(- Cited Evidence: Verify Git Sandboxing, Security Violations) Tj
+0 -14 Td
+(- TechLead \(5\): Sandboxed cloning detected.) Tj
+0 -14 Td
+(- Cited Evidence: Verify Git Sandboxing, Security Violations) Tj
+0 -14 Td
+ET
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 2697 >>
+stream
+BT
+/F1 10 Tf
+50 750 Td
+() Tj
+0 -14 Td
+(Remediation: Ensure git clone uses tempfile.TemporaryDirectory and subprocess.run with error handling; remove raw os.system calls.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Structured Output Enforcement — Final Score: 2) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(3\): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.) Tj
+0 -14 Td
+(- Cited Evidence: Structured Output Usage) Tj
+0 -14 Td
+(- Prosecutor \(1\): Missing evidence: Structured Output Usage) Tj
+0 -14 Td
+(- Cited Evidence: Structured Output Usage) Tj
+0 -14 Td
+(- TechLead \(2\): No clear artifacts; technical debt suspected.) Tj
+0 -14 Td
+(- Cited Evidence: Structured Output Usage) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judicial Nuance and Dialectics — Final Score: 3) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(3\): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.) Tj
+0 -14 Td
+(- Prosecutor \(3\): Found concerning patterns or insufficient evidence.) Tj
+0 -14 Td
+(- TechLead \(2\): No clear artifacts; technical debt suspected.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Chief Justice Synthesis Engine — Final Score: 3) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(3\): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.) Tj
+0 -14 Td
+(- Prosecutor \(3\): Found concerning patterns or insufficient evidence.) Tj
+0 -14 Td
+(- TechLead \(2\): No clear artifacts; technical debt suspected.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Architectural Diagram Analysis — Final Score: 2) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Judge Opinions:) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Defense \(3\): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.) Tj
+0 -14 Td
+(- Cited Evidence: Architectural Diagram Analysis) Tj
+0 -14 Td
+(- Prosecutor \(1\): Missing evidence: Architectural Diagram Analysis) Tj
+0 -14 Td
+(- Cited Evidence: Architectural Diagram Analysis) Tj
+0 -14 Td
+(- TechLead \(2\): No clear artifacts; technical debt suspected.) Tj
+0 -14 Td
+(- Cited Evidence: Architectural Diagram Analysis) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation: See detective evidence and implement missing artifacts.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Reflection on the MinMax Feedback Loop) Tj
+0 -14 Td
+ET
+
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 276 >>
+stream
+BT
+/F1 10 Tf
+50 750 Td
+() Tj
+0 -14 Td
+(\(Add reflections: what peer agents caught, how you updated your agent, and remaining gaps.\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Remediation Plan) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(See per-criterion remediation above.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 3 0 R >> >> /MediaBox [0 0 612 792] /Contents 10 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f
+0000000000 00000 n
+0000000049 00000 n
+0000000127 00000 n
+0000000197 00000 n
+0000002558 00000 n
+0000002684 00000 n
+0000005999 00000 n
+0000006125 00000 n
+0000008874 00000 n
+0000009000 00000 n
+0000009328 00000 n
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+9456
+%%EOF
