@@ -137,32 +137,28 @@ Missing evidence: if a judge cites an evidence id that is not in the snapshot, t
 
 ## Criterion-by-Criterion Breakdown
 
-### Theoretical Depth (Documentation) — Final Score: 4
-
-**Dissent:** High variance across judges; median score used after re-evaluation.
+### Theoretical Depth (Documentation) — Final Score: 2
 
 **Judge Opinions:**
 
-- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Theoretical Depth (Documentation): Terms appear in detailed architectural explanations. The report explains how Dialectical Synthesis is implemented via th...)
-  - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
-- **Prosecutor** (2): (Rubric: Theoretical Depth (Documentation) - Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Synchronization'. Determine if the term appears in a substantive architectural expl...)
-  - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
-- **TechLead** (4): Rubric: Theoretical Depth (Documentation). Guidance: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...; Artifacts present; pragmatic functionality likely.
-  - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
+- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...
+  - Cited Evidence: Determine theoretical depth
+- **Prosecutor** (1): (Rubric: Theoretical Depth (Documentation) - Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Synchronization'. Determine if the term appears in a substantive architectural expl...); Missing evidence: Determine theoretical depth
+  - Cited Evidence: Determine theoretical depth
+- **TechLead** (2): Rubric: Theoretical Depth (Documentation). Guidance: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...; No clear artifacts; technical debt suspected.
+  - Cited Evidence: Determine theoretical depth
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
-### Report Accuracy (Cross-Reference) — Final Score: 4
-
-**Dissent:** High variance across judges; median score used after re-evaluation.
+### Report Accuracy (Cross-Reference) — Final Score: 2
 
 **Judge Opinions:**
 
-- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Report Accuracy (Cross-Reference): All file paths mentioned in the report exist in the repo. Feature claims match code evidence. Zero hallucinated paths....)
+- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...
   - Cited Evidence: Extract file paths from PDF
-- **Prosecutor** (2): (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...)
+- **Prosecutor** (1): (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...); Missing evidence: Extract file paths from PDF
   - Cited Evidence: Extract file paths from PDF
-- **TechLead** (4): Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; Artifacts present; pragmatic functionality likely.
+- **TechLead** (2): Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; No clear artifacts; technical debt suspected.
   - Cited Evidence: Extract file paths from PDF
 
 **Remediation:** See detective evidence and implement missing artifacts.
@@ -212,17 +208,15 @@ Missing evidence: if a judge cites an evidence id that is not in the snapshot, t
 
 **Remediation:** Implement parallel fan-out for Detectives and Judges with a fan-in EvidenceAggregator node; add conditional edges for failure handling.
 
-### Safe Tool Engineering — Final Score: 1
-
-**Dissent:** High variance and re-evaluation found missing cited evidence; prosecutor position favored.
+### Safe Tool Engineering — Final Score: 2
 
 **Judge Opinions:**
 
-- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Safe Tool Engineering: All git operations run inside 'tempfile.TemporaryDirectory()'. 'subprocess.run()' used with error handling. No raw 'os.s...)
+- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...
   - Cited Evidence: Verify Git Sandboxing, Security Violations
-- **Prosecutor** (1): (Rubric: Safe Tool Engineering - Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing is used for git clone operations. Check for raw 'os.system()' calls -- these ar...); Missing evidence: Security Violations; Raw os.system usage detected: security risk
+- **Prosecutor** (1): (Rubric: Safe Tool Engineering - Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing is used for git clone operations. Check for raw 'os.system()' calls -- these ar...); Missing evidence: Verify Git Sandboxing; Missing evidence: Security Violations; Raw os.system usage detected: security risk
   - Cited Evidence: Verify Git Sandboxing, Security Violations
-- **TechLead** (5): Rubric: Safe Tool Engineering. Guidance: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...; Sandboxed cloning detected.
+- **TechLead** (2): Rubric: Safe Tool Engineering. Guidance: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...; No clear artifacts; technical debt suspected.
   - Cited Evidence: Verify Git Sandboxing, Security Violations
 
 **Remediation:** Ensure git clone uses tempfile.TemporaryDirectory and subprocess.run with error handling; remove raw os.system calls.

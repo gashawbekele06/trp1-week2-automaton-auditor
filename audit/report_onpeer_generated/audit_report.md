@@ -1,28 +1,26 @@
 # Audit Report
 
-Repo: https://github.com/gashawbekele06/trp1-week2-automaton-auditor.git
+Repo: https://github.com/Melaku-GA/The-Autonomous_Auditor_Langraph_Swarm.git
 
-Overall Score: 3.4
+Overall Score: 3.1
 
 ## Criteria
 
 ### Theoretical Depth (Documentation) (theoretical_depth)
-Final Score: 4  
-Dissent: High variance across judges; median score used after re-evaluation.
+Final Score: 2  
 Judge Opinions:
-- Defense: 5 — Evidence of intent and partial implementation found; reward effort and intent. (Theoretical Depth (Documentation): Terms appear in detailed architectural explanations. The report explains how Dialectical Synthesis is implemented via th...)
-- Prosecutor: 2 — (Rubric: Theoretical Depth (Documentation) - Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Synchronization'. Determine if the term appears in a substantive architectural expl...)
-- TechLead: 4 — Rubric: Theoretical Depth (Documentation). Guidance: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...; Artifacts present; pragmatic functionality likely.
+- Defense: 3 — No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...
+- Prosecutor: 1 — (Rubric: Theoretical Depth (Documentation) - Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Synchronization'. Determine if the term appears in a substantive architectural expl...); Missing evidence: Determine theoretical depth
+- TechLead: 2 — Rubric: Theoretical Depth (Documentation). Guidance: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...; No clear artifacts; technical debt suspected.
 Remediation:
 See detective evidence and implement missing artifacts.
 
 ### Report Accuracy (Cross-Reference) (report_accuracy)
-Final Score: 4  
-Dissent: High variance across judges; median score used after re-evaluation.
+Final Score: 2  
 Judge Opinions:
-- Defense: 5 — Evidence of intent and partial implementation found; reward effort and intent. (Report Accuracy (Cross-Reference): All file paths mentioned in the report exist in the repo. Feature claims match code evidence. Zero hallucinated paths....)
-- Prosecutor: 2 — (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...)
-- TechLead: 4 — Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; Artifacts present; pragmatic functionality likely.
+- Defense: 3 — No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...
+- Prosecutor: 1 — (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...); Missing evidence: Extract file paths from PDF
+- TechLead: 2 — Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; No clear artifacts; technical debt suspected.
 Remediation:
 See detective evidence and implement missing artifacts.
 
@@ -57,12 +55,11 @@ Remediation:
 Implement parallel fan-out for Detectives and Judges with a fan-in EvidenceAggregator node; add conditional edges for failure handling.
 
 ### Safe Tool Engineering (safe_tool_engineering)
-Final Score: 1  
-Dissent: High variance and re-evaluation found missing cited evidence; prosecutor position favored.
+Final Score: 2  
 Judge Opinions:
-- Defense: 5 — Evidence of intent and partial implementation found; reward effort and intent. (Safe Tool Engineering: All git operations run inside 'tempfile.TemporaryDirectory()'. 'subprocess.run()' used with error handling. No raw 'os.s...)
-- Prosecutor: 1 — (Rubric: Safe Tool Engineering - Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing is used for git clone operations. Check for raw 'os.system()' calls -- these ar...); Missing evidence: Security Violations; Raw os.system usage detected: security risk
-- TechLead: 5 — Rubric: Safe Tool Engineering. Guidance: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...; Sandboxed cloning detected.
+- Defense: 3 — No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...
+- Prosecutor: 1 — (Rubric: Safe Tool Engineering - Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing is used for git clone operations. Check for raw 'os.system()' calls -- these ar...); Missing evidence: Verify Git Sandboxing; Missing evidence: Security Violations; Raw os.system usage detected: security risk
+- TechLead: 2 — Rubric: Safe Tool Engineering. Guidance: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...; No clear artifacts; technical debt suspected.
 Remediation:
 Ensure git clone uses tempfile.TemporaryDirectory and subprocess.run with error handling; remove raw os.system calls.
 
