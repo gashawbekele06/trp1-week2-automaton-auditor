@@ -10,6 +10,8 @@ from langchain_openai import ChatOpenAI
 from src.state import AgentState, Evidence
 from src.tools.repo_tools import clone_or_use_local, extract_git_history, analyze_graph_structure, check_file_exists
 from src.tools.doc_tools import ingest_pdf, query_pdf, extract_cited_filepaths
+from src.tools.doc_tools import extract_images_from_pdf
+import tempfile
 
 
 def repo_investigator(state: AgentState) -> Dict:
@@ -142,6 +144,13 @@ def doc_analyst(state: AgentState) -> Dict:
     evidences: Dict[str, List[Evidence]] = {}
 
     chunks = ingest_pdf(pdf_path)
+    # Normalize chunks with explicit indices for provenance
+    normalized_chunks = []
+    if chunks and not (len(chunks) == 1 and "error" in chunks[0]):
+        for i, c in enumerate(chunks):
+            normalized_chunks.append({**c, "chunk_index": i})
+    else:
+        normalized_chunks = chunks
     
     for dimension in rubric:
         if dimension.get("target_artifact") != "pdf_report":
@@ -152,16 +161,25 @@ def doc_analyst(state: AgentState) -> Dict:
         
         if dim_id == "theoretical_depth":
             keywords = ["Dialectical Synthesis", "Fan-In", "Fan-Out", "Metacognition", "State Synchronization"]
-            keyword_evidence = query_pdf(chunks, keywords)
-            
+            keyword_evidence = query_pdf(normalized_chunks, keywords)
+
             for ev in keyword_evidence:
-                 evidences[dim_id].append(Evidence(
+                # include chunk provenance for stronger evidence
+                ctx = ev.get("context", "")
+                chunk_idx = None
+                # try to find originating chunk index
+                for c in normalized_chunks:
+                    if c.get("text", "").startswith(ctx[:50]):
+                        chunk_idx = c.get("chunk_index")
+                        break
+
+                evidences[dim_id].append(Evidence(
                     goal=f"Determine presence of {ev['keyword']}",
                     found=True,
-                    content=ev['context'][:500],
-                    location="PDF Document context",
-                    rationale="Keyword matched in docling chunk",
-                    confidence=ev['confidence']
+                    content=ctx[:1000],
+                    location=f"pdf:{pdf_path}:chunk:{chunk_idx}",
+                    rationale="Keyword matched in document chunk; longer contexts increase confidence",
+                    confidence=float(ev.get("confidence", 0.6))
                 ))
             if not keyword_evidence:
                  evidences[dim_id].append(Evidence(
@@ -174,26 +192,68 @@ def doc_analyst(state: AgentState) -> Dict:
                 ))
 
         elif dim_id == "report_accuracy":
-             cited_paths = extract_cited_filepaths(chunks)
-             
-             if not cited_paths:
-                   evidences[dim_id].append(Evidence(
+            cited_paths = extract_cited_filepaths(chunks)
+
+            if not cited_paths:
+                evidences[dim_id].append(Evidence(
                     goal="Extract file paths from PDF",
                     found=False,
                     content="No structured file paths cited in text.",
                     location="PDF Document context",
                     rationale="Regex extraction found no paths.",
+                    confidence=0.6
+                ))
+            else:
+                # Cross-reference cited paths against the repository when available
+                repo_path = state.get("repo_path")
+                found_list = []
+                for p in cited_paths:
+                    exists = False
+                    if repo_path:
+                        try:
+                            exists = check_file_exists(repo_path, p)
+                        except Exception:
+                            exists = False
+                    found_list.append((p, exists))
+
+                status_list = [f"{p}:{'Y' if ok else 'N'}" for p, ok in found_list]
+                evidences[dim_id].append(Evidence(
+                    goal="Extract file paths from PDF",
+                    found=any(x[1] for x in found_list),
+                    content=f"Report cites files: {', '.join(p for p, _ in found_list)}",
+                    location=f"pdf:{pdf_path}",
+                    rationale=f"Cross-referenced cited files against repo: {', '.join(status_list)}",
+                    confidence=0.9 if any(x[1] for x in found_list) else 0.5
+                ))
+
+                # emit per-file evidence for provenance
+                for p, ok in found_list:
+                    evidences[dim_id].append(Evidence(
+                        goal=f"Cited file exists: {p}",
+                        found=ok,
+                        content=p,
+                        location=f"repo:{repo_path}:{p}" if repo_path else p,
+                        rationale="Cross-referenced from PDF citations",
+                        confidence=0.95 if ok else 0.2
+                    ))
+
+    # Attempt to extract images embedded in the PDF for vision analysis
+    try:
+        img_meta = extract_images_from_pdf(pdf_path)
+        if img_meta:
+            # Attach lightweight evidence entries pointing to extracted images
+            evidences.setdefault("swarm_visual", [])
+            for im in img_meta:
+                evidences["swarm_visual"].append(Evidence(
+                    goal="Extract embedded diagram image from PDF",
+                    found=True,
+                    content=im.get("name"),
+                    location=im.get("path"),
+                    rationale=f"Extracted image from PDF page {im.get('page')}",
                     confidence=0.8
                 ))
-             else:
-                   evidences[dim_id].append(Evidence(
-                        goal="Extract file paths from PDF",
-                        found=True,
-                        content=f"Report cites files: {', '.join(cited_paths)}",
-                        location="PDF Document context",
-                        rationale=f"Extracted {len(cited_paths)} file path(s).",
-                        confidence=0.8
-                    ))
+    except Exception:
+        pass
 
     return {"evidences": evidences, "errors": []}
 
@@ -207,7 +267,7 @@ def vision_inspector(state: AgentState) -> Dict:
     print("--- VISION INSPECTOR ---")
     evidences: Dict[str, List[Evidence]] = {}
 
-    # Look for the diagram file
+    # Look for the diagram file in repo root first
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     diagram_candidates = [
         os.path.join(project_root, "automaton_flow.png"),
@@ -223,15 +283,27 @@ def vision_inspector(state: AgentState) -> Dict:
         if os.path.exists(candidate):
             diagram_path = candidate
             break
-    
+
+    # If none found in repo root, try extracting images from the PDF (if provided)
+    if not diagram_path:
+        pdf_path = state.get("pdf_path")
+        if pdf_path:
+            try:
+                imgs = extract_images_from_pdf(pdf_path)
+                if imgs:
+                    # pick the first extracted image
+                    diagram_path = imgs[0]["path"]
+            except Exception:
+                diagram_path = None
+
     if not diagram_path:
         evidences["swarm_visual"] = [Evidence(
             goal="Architectural Diagram Analysis",
             found=False,
-            content="No architectural diagram found in project root.",
-            location="Project root",
-            rationale="Searched for automaton_flow.png/jpg, architecture.png",
-            confidence=0.9
+            content="No architectural diagram found in project root or PDF.",
+            location="Project root / PDF",
+            rationale="Searched for automaton_flow.png/jpg/svg and extracted PDF images",
+            confidence=0.6
         )]
         return {"evidences": evidences, "errors": []}
 
@@ -254,13 +326,13 @@ def vision_inspector(state: AgentState) -> Dict:
         llm = ChatOpenAI(model="gpt-4o", temperature=0, max_tokens=1024)
 
         analysis_prompt = (
-            "Analyze this LangGraph architectural diagram. Determine:\n"
-            "1. Does it show parallel fan-out from START to multiple Detective nodes?\n"
-            "2. Is there a synchronization/aggregation node (fan-in) after detectives?\n"
-            "3. Are there parallel Judge nodes (Prosecutor, Defense, TechLead)?\n"
-            "4. Is there a Chief Justice synthesis node before END?\n"
-            "5. Does it clearly distinguish parallel vs sequential flow?\n\n"
-            "Respond with a structured assessment of each point."
+            "Analyze this LangGraph architectural diagram. For each of the following points, return YES/NO and a short rationale:\n"
+            "1. Shows parallel fan-out from START to multiple Detective nodes.\n"
+            "2. Contains a synchronization/aggregation node (fan-in) after detectives.\n"
+            "3. Shows parallel Judge nodes (Prosecutor, Defense, TechLead).\n"
+            "4. Includes a Chief Justice synthesis node before END.\n"
+            "5. Distinguishes parallel vs sequential flow.\n\n"
+            "Include any specific labels you can read from the diagram (e.g., node names) and whether the diagram is SVG (text-searchable) or raster."
         )
 
         response = llm.invoke([
@@ -280,9 +352,9 @@ def vision_inspector(state: AgentState) -> Dict:
         evidences["swarm_visual"] = [Evidence(
             goal="Architectural Diagram Analysis",
             found=has_parallel and has_sync,
-            content=analysis_text[:800],
+            content=analysis_text[:1600],
             location=os.path.basename(diagram_path),
-            rationale="GPT-4o vision analysis of architectural diagram",
+            rationale="Vision analysis of architectural diagram (from repo or extracted PDF image)",
             confidence=0.85
         )]
 
