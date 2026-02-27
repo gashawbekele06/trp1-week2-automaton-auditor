@@ -107,34 +107,58 @@ Traceability & reproducibility
 - Snapshot hash: EvidenceAggregator computes a SHA256 over a canonical JSON serialization of the snapshot and stores it in `audit/snapshots/`.
 - Reproducibility log: ChiefJustice writes an ordered list of combination steps, including input hashes, sort orders, tie-break rules, and final numeric computations, so graders can re-run synthesis deterministically.
 
-Pseudocode wiring example (Mermaid)
+Mermaid-Architectural Diagram
 
 ```mermaid
 graph TD
-START[START] --> Setup[Setup: Clone, PDF Ingest, Rubric Load]
-Setup --> FanDetect{Fan-Out Detectives}
-FanDetect -->|Evidence Request| Repo[RepoInvestigator]
-FanDetect -->|Evidence Request| Doc[DocAnalyst]
-FanDetect -->|Evidence Request| Vision[VisionInspector]
-Repo -->|Evidence JSON| Agg[Fan-In Aggregator]
-Doc -->|Evidence JSON| Agg
-Vision -->|Evidence JSON| Agg
-Agg --> FanJud{Fan-Out Judges per Dimension}
-FanJud -->|Evidence JSON| Pros[Prosecutor]
-FanJud -->|Evidence JSON| Def[Defense]
-FanJud -->|Evidence JSON| Tech[TechLead]
-Pros -->|JudicialOpinion| Synth[Synthesis: Deterministic Rules]
-Def -->|JudicialOpinion| Synth
-Tech -->|JudicialOpinion| Synth
-Synth -->|AuditReport| Report[Markdown Audit Report]
-Report --> END[END]
-%% Conditional / error paths
-FanDetect -.->|Error / Missing Evidence| RetryDet[Retry Detectives]
-RetryDet -.-> FanDetect
-Agg -.->|Evidence Missing| RetryDet
-FanJud -.->|Parse Fail / Variance > 2| RetryJud[Retry Judges or Re-eval]
-RetryJud -.-> FanJud
+START([START])
+subgraph Detectives
+RI[RepoInvestigator]
+DA[DocAnalyst]
+VI[VisionInspector]
+end
+EA[EvidenceAggregator]
+subgraph Judges
+P[Prosecutor]
+D[Defense]
+T[TechLead]
+end
+CJ[ChiefJustice]
+END([END])
+START --> Detectives
+RI -->|Evidence JSON| EA
+DA -->|Evidence JSON| EA
+VI -->|Evidence JSON| EA
+EA -->|Snapshot| Judges
+P -->|JudicialOpinion| CJ
+D -->|JudicialOpinion| CJ
+T -->|JudicialOpinion| CJ
+CJ -->|AuditReport| Report[Markdown Audit Report]
+Report --> END
+%% Conditional / retry flows
+EA -.->|missing evidence| RD[Retry Detectives]
+RD --> Detectives
+Judges -.->|parse fail / variance| RJ[Retry Judges]
+RJ --> Judges
 ```
+
+### Implementation alignment check
+
+Quick verification against the repository implementation (`src/`):
+
+- Nodes: the Mermaid diagram's node set (RepoInvestigator, DocAnalyst, VisionInspector, EvidenceAggregator, Prosecutor, Defense, TechLead, ChiefJustice) matches `src/graph.py`'s nodes and the detective/judge function names in `src/nodes/`.
+- Report node: the diagram has an explicit `Report` node between `ChiefJustice` and `END`. In the implementation `chief_justice` writes the final markdown to `audit/report_onself_generated/` and the graph routes `ChiefJustice -> END` directly; there is no separate `Report` node in `src/graph.py`. The diagram's `Report` box is a valid abstraction but not a distinct runtime node.
+- Retry edges: the dotted retry edges in the diagram are conceptual. `src/graph.py` does not implement explicit retry nodes/edges (it uses a `check_for_critical_failures` conditional), while `src/nodes/justice.py` contains deterministic re-evaluation logic inside `chief_justice` (variance re-evaluation). If you want graph-level retries, add edges and a retry controller node in `src/graph.py`.
+- Snapshot / hash: the report text describes snapshot hashes and `audit/snapshots/`, but the current `evidence_aggregator` implementation in `src/graph.py` only collects and returns `evidences` (it does not compute a canonical snapshot hash or persist snapshots). Consider adding a canonical JSON serialization + SHA256 write in `evidence_aggregator` (and persist under `audit/snapshots/`) to match the report's claims.
+- Diagram file format: `vision_inspector` in `src/nodes/detectives.py` looks for `automaton_flow.png` / `.jpg` / `architecture.png`; the repo currently contains the Mermaid source in Markdown and an SVG artifact. Either render the SVG to a PNG at `automaton_flow.png` or update `vision_inspector` to accept SVGs (and adapt the vision encoding accordingly).
+
+Recommended minimal fixes to align diagram and implementation:
+
+1. Add snapshot hashing to `evidence_aggregator` (compute canonical JSON -> SHA256 -> write to `audit/snapshots/<hash>.json`).
+2. Either (A) regenerate the diagram as `automaton_flow.png` (PNG raster) so `vision_inspector` finds it, or (B) extend `vision_inspector` to include SVG candidates.
+3. If you prefer graph-level retry semantics, add `RetryDetectives`/`RetryJudges` nodes and conditional edges in `src/graph.py`; otherwise document that re-evaluation occurs inside `chief_justice`.
+
+These are small, actionable changes — tell me which you'd like me to apply and I will update the code and/or diagram files.
 
 Data shapes (examples)
 - Evidence: {"id": "sha256...", "analyzer": "RepoInvestigator", "location": "src/state.py:12", "claim": "Uses Pydantic BaseModel", "confidence": 0.95}
