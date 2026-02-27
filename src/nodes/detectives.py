@@ -212,7 +212,10 @@ def vision_inspector(state: AgentState) -> Dict:
     diagram_candidates = [
         os.path.join(project_root, "automaton_flow.png"),
         os.path.join(project_root, "automaton_flow.jpg"),
+        os.path.join(project_root, "automaton_flow.svg"),
         os.path.join(project_root, "architecture.png"),
+        os.path.join(project_root, "architecture.svg"),
+        os.path.join(project_root, "reports", "automaton_flow.svg"),
     ]
     
     diagram_path = None
@@ -235,7 +238,18 @@ def vision_inspector(state: AgentState) -> Dict:
     # Encode the image and send to GPT-4o for analysis
     try:
         with open(diagram_path, "rb") as f:
-            img_b64 = base64.b64encode(f.read()).decode("utf-8")
+            data = f.read()
+
+        # Determine content type by extension; allow SVGs as well as raster images
+        ext = os.path.splitext(diagram_path)[1].lower()
+        if ext == ".svg":
+            mime = "image/svg+xml"
+        elif ext in (".jpg", ".jpeg"):
+            mime = "image/jpeg"
+        else:
+            mime = "image/png"
+
+        img_b64 = base64.b64encode(data).decode("utf-8")
 
         llm = ChatOpenAI(model="gpt-4o", temperature=0, max_tokens=1024)
 
@@ -253,7 +267,7 @@ def vision_inspector(state: AgentState) -> Dict:
             SystemMessage(content="You are an expert LangGraph architecture reviewer."),
             HumanMessage(content=[
                 {"type": "text", "text": analysis_prompt},
-                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{img_b64}"}}
+                {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{img_b64}"}}
             ])
         ])
 
