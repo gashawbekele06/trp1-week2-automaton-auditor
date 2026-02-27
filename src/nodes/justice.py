@@ -90,8 +90,25 @@ def chief_justice(state: AgentState) -> Dict:
                 # If re-eval fails, choose the min score
                 final = min_score
                 dissent = "High variance and re-evaluation found missing cited evidence; prosecutor position favored."
+                # Signal graph-level detective retry request so the orchestrator can re-run targeted probes
+                # Respect a retry bound to avoid infinite loops
+                retry_counts = state.get("retry_counts", {}) or {}
+                detectives_retries = retry_counts.get("detectives", 0)
+                max_retries = int(os.getenv("MAX_DETECTIVE_RETRIES", "2"))
+                if detectives_retries < max_retries:
+                    state["needs_detective_retry"] = True
+                    print(f"ChiefJustice requested detective retry (current={detectives_retries}, max={max_retries})")
+                else:
+                    print(f"ChiefJustice: detective retry limit reached ({detectives_retries})")
             else:
                 dissent = "High variance across judges; median score used after re-evaluation."
+                # If variance is high but cited evidence exists, prefer a judge-level retry to reduce nondeterminism
+                retry_counts = state.get("retry_counts", {}) or {}
+                judge_retries = retry_counts.get("judges", 0)
+                max_j_retries = int(os.getenv("MAX_JUDGE_RETRIES", "1"))
+                if judge_retries < max_j_retries:
+                    state["needs_judge_retry"] = True
+                    print(f"ChiefJustice requested judge retry (current={judge_retries}, max={max_j_retries})")
 
         # Construct remediation: simple actionable hint based on dimension
         remediation = "See detective evidence and implement missing artifacts."

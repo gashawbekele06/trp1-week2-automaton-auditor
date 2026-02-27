@@ -72,16 +72,18 @@ Reflection on the MinMax Feedback Loop
 
 ## Criterion-by-Criterion Breakdown
 
-### Theoretical Depth (Documentation) — Final Score: 2
+### Theoretical Depth (Documentation) — Final Score: 4
+
+**Dissent:** High variance across judges; median score used after re-evaluation.
 
 **Judge Opinions:**
 
-- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere.
-  - Cited Evidence: Determine theoretical depth
-- **Prosecutor** (1): Missing evidence: Determine theoretical depth
-  - Cited Evidence: Determine theoretical depth
-- **TechLead** (2): No clear artifacts; technical debt suspected.
-  - Cited Evidence: Determine theoretical depth
+- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent.
+  - Cited Evidence: Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
+- **Prosecutor** (2): Found concerning patterns or insufficient evidence.
+  - Cited Evidence: Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
+- **TechLead** (4): Artifacts present; pragmatic functionality likely.
+  - Cited Evidence: Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-Out
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
