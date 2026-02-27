@@ -134,9 +134,12 @@ def chief_justice(state: AgentState) -> Dict:
         remediation_plan="See per-criterion remediation above."
     )
 
-    # Persist a Markdown copy under audit/report_onself_generated for inspection
+    # Persist a Markdown copy under audit/report_onself_generated or
+    # audit/report_onpeer_generated depending on whether this is a self-audit.
     try:
-        out_dir = os.path.join(os.getcwd(), "audit", "report_onself_generated")
+        is_self = state.get("is_self_audit", True)
+        out_dir_name = "report_onself_generated" if is_self else "report_onpeer_generated"
+        out_dir = os.path.join(os.getcwd(), "audit", out_dir_name)
         os.makedirs(out_dir, exist_ok=True)
         md_path = os.path.join(out_dir, "audit_report.md")
         with open(md_path, "w", encoding="utf-8") as f:
