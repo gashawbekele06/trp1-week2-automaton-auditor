@@ -2,7 +2,7 @@
 
 Repo: https://github.com/gashawbekele06/trp1-week2-automaton-auditor.git
 
-Overall Score: 3.1
+Overall Score: 3.4
 
 ## Criteria
 
@@ -17,11 +17,11 @@ Remediation:
 See detective evidence and implement missing artifacts.
 
 ### Report Accuracy (Cross-Reference) (report_accuracy)
-Final Score: 1  
-Dissent: High variance and re-evaluation found missing cited evidence; prosecutor position favored.
+Final Score: 4  
+Dissent: High variance across judges; median score used after re-evaluation.
 Judge Opinions:
 - Defense: 5 — Evidence of intent and partial implementation found; reward effort and intent. (Report Accuracy (Cross-Reference): All file paths mentioned in the report exist in the repo. Feature claims match code evidence. Zero hallucinated paths....)
-- Prosecutor: 1 — (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...); Missing evidence: Cited file exists: src/tools/*; Missing evidence: Cited file exists: tests/test_judges_structured_output.py; Missing evidence: Cited file exists: src/state.py.AuditReport
+- Prosecutor: 2 — (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...)
 - TechLead: 4 — Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; Artifacts present; pragmatic functionality likely.
 Remediation:
 See detective evidence and implement missing artifacts.
