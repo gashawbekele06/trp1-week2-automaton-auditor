@@ -152,18 +152,18 @@ Missing evidence: if a judge cites an evidence id that is not in the snapshot, t
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
-### Report Accuracy (Cross-Reference) — Final Score: 4
+### Report Accuracy (Cross-Reference) — Final Score: 1
 
-**Dissent:** High variance across judges; median score used after re-evaluation.
+**Dissent:** High variance and re-evaluation found missing cited evidence; prosecutor position favored.
 
 **Judge Opinions:**
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Report Accuracy (Cross-Reference): All file paths mentioned in the report exist in the repo. Feature claims match code evidence. Zero hallucinated paths....)
-  - Cited Evidence: Extract file paths from PDF
-- **Prosecutor** (2): (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...)
-  - Cited Evidence: Extract file paths from PDF
+  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/tools/*, Cited file exists: src/state.py, Cited file exists: src/tools/doc_tools.py, Cited file exists: src/graph.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/tools/repo_tools.py, Cited file exists: tests/test_judges_structured_output.py, Cited file exists: main.py, Cited file exists: src/nodes/detectives.py, Cited file exists: src/nodes/justice.py, Cited file exists: src/state.py.AuditReport
+- **Prosecutor** (1): (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...); Missing evidence: Cited file exists: src/tools/*; Missing evidence: Cited file exists: tests/test_judges_structured_output.py; Missing evidence: Cited file exists: src/state.py.AuditReport
+  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/tools/*, Cited file exists: src/state.py, Cited file exists: src/tools/doc_tools.py, Cited file exists: src/graph.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/tools/repo_tools.py, Cited file exists: tests/test_judges_structured_output.py, Cited file exists: main.py, Cited file exists: src/nodes/detectives.py, Cited file exists: src/nodes/justice.py, Cited file exists: src/state.py.AuditReport
 - **TechLead** (4): Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; Artifacts present; pragmatic functionality likely.
-  - Cited Evidence: Extract file paths from PDF
+  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/tools/*, Cited file exists: src/state.py, Cited file exists: src/tools/doc_tools.py, Cited file exists: src/graph.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/tools/repo_tools.py, Cited file exists: tests/test_judges_structured_output.py, Cited file exists: main.py, Cited file exists: src/nodes/detectives.py, Cited file exists: src/nodes/justice.py, Cited file exists: src/state.py.AuditReport
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
