@@ -135,16 +135,28 @@ def build_interim_graph() -> StateGraph:
     workflow.add_edge("DocAnalyst", "EvidenceAggregator")
     workflow.add_edge("VisionInspector", "EvidenceAggregator")
 
+    # JudgeGate: clean passthrough that enables proper conditional fan-out to all
+    # three judge personas. Without this gate node, mixing conditional_edges
+    # (which route to a single target per key) with unconditional parallel edges
+    # would create a duplicate edge to Prosecutor and bypass the FAILURE/RETRY
+    # gate for Defense and TechLead.
+    def judge_gate(state: AgentState):
+        """Fan-out gate between EvidenceAggregator and the three Judge personas."""
+        return {}
+
+    workflow.add_node("JudgeGate", judge_gate)
+
     # Add retry controller nodes
     workflow.add_node("RetryDetectives", retry_detectives)
     workflow.add_node("RetryJudges", retry_judges)
 
-    # After aggregation, decide whether to proceed to Judicial layer, retry, or fail
+    # After aggregation, decide whether to proceed to Judicial layer, retry, or fail.
+    # Routes CONTINUE to JudgeGate which then fans out to all three judges in parallel.
     workflow.add_conditional_edges(
         "EvidenceAggregator",
         aggregator_decision,
         {
-            "CONTINUE": "Prosecutor",
+            "CONTINUE": "JudgeGate",
             "FAILURE": END,
             "RETRY_DETECTIVES": "RetryDetectives",
         }
@@ -155,10 +167,10 @@ def build_interim_graph() -> StateGraph:
     workflow.add_edge("RetryDetectives", "DocAnalyst")
     workflow.add_edge("RetryDetectives", "VisionInspector")
 
-    # Fan-out to three judges in parallel from EvidenceAggregator
-    workflow.add_edge("EvidenceAggregator", "Prosecutor")
-    workflow.add_edge("EvidenceAggregator", "Defense")
-    workflow.add_edge("EvidenceAggregator", "TechLead")
+    # Fan-out to three judges in parallel from JudgeGate (not EvidenceAggregator)
+    workflow.add_edge("JudgeGate", "Prosecutor")
+    workflow.add_edge("JudgeGate", "Defense")
+    workflow.add_edge("JudgeGate", "TechLead")
 
     # Fan-in: each judge routes to ChiefJustice
     workflow.add_edge("Prosecutor", "ChiefJustice")

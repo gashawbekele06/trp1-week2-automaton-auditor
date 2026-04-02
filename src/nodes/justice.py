@@ -64,11 +64,20 @@ def chief_justice(state: AgentState) -> Dict:
             if tech_ops:
                 final = tech_ops[0].score
 
-        # Fact supremacy: if defense claims 'Deep Metacognition' but detectives have no evidence for theoretical_depth
+        # Fact supremacy: forensic evidence (facts from Detectives) always overrules
+        # judicial opinion. Applied to ALL dimensions: if the Defense argues a high
+        # score for a criterion where Detectives found zero positive evidence, overrule.
+        dim_evidence = evidences.get(dim_id, [])
+        has_positive_evidence = any(ev.found for ev in dim_evidence)
+        defense_ops = [o for o in ops if o.judge == "Defense"]
+        if defense_ops and not has_positive_evidence:
+            if max(o.score for o in defense_ops) > 3:
+                final = min(final, 3)
+
+        # Specific fact-supremacy rule for theoretical_depth: "Deep Metacognition" keyword
         if dim_id == "theoretical_depth":
-            defense_claims = [o for o in ops if o.judge == "Defense" and "Deep Metacognition" in o.argument]
-            if defense_claims and not evidences.get("theoretical_depth"):
-                # Overrule defense by lowering its contribution
+            defense_metacognition = [o for o in defense_ops if "Deep Metacognition" in o.argument]
+            if defense_metacognition and not evidences.get("theoretical_depth"):
                 final = min(final, 3)
 
         # Variance re-evaluation
