@@ -74,6 +74,13 @@ class ArchitectureAnalysis(BaseModel):
     use_tempfile: bool = Field(default=False)
     has_os_system: bool = Field(default=False)
     uses_structured_output: bool = Field(default=False)
+    # judicial_nuance: distinct judge persona prompts detected
+    has_distinct_judge_prompts: bool = Field(default=False)
+    judge_prompt_count: int = Field(default=0)
+    # chief_justice_synthesis: deterministic if/else rules detected in justice.py
+    has_deterministic_synthesis: bool = Field(default=False)
+    has_security_override_rule: bool = Field(default=False)
+    has_variance_reeval_rule: bool = Field(default=False)
 
 def analyze_graph_structure(repo_path: str) -> ArchitectureAnalysis:
     """Parses AST to determine structural characteristics of the agent."""
@@ -138,6 +145,34 @@ def analyze_graph_structure(repo_path: str) -> ArchitectureAnalysis:
                          if node.func.attr == "TemporaryDirectory":
                              if isinstance(node.func.value, ast.Name) and node.func.value.id == "tempfile":
                                  analysis.use_tempfile = True
+
+                    # judicial_nuance: count top-level string constants whose value
+                    # contains persona markers — each distinct prompt constant counts.
+                    if "judges" in filepath:
+                        if isinstance(node, ast.Assign):
+                            for target in node.targets:
+                                if isinstance(target, ast.Name) and isinstance(node.value, ast.Constant):
+                                    val = str(node.value.value)
+                                    persona_markers = ["Prosecutor", "Defense", "TechLead", "Tech Lead"]
+                                    if any(m in val for m in persona_markers) and len(val) > 50:
+                                        analysis.judge_prompt_count += 1
+                        analysis.has_distinct_judge_prompts = analysis.judge_prompt_count >= 3
+
+                    # chief_justice_synthesis: detect deterministic rules in justice.py
+                    if "justice" in filepath:
+                        if isinstance(node, ast.If):
+                            # security_override: looks for security_flag or "security" in test
+                            try:
+                                src_segment = ast.unparse(node.test)
+                                if "security" in src_segment.lower() or "security_flag" in src_segment:
+                                    analysis.has_security_override_rule = True
+                                if "var" in src_segment and "2" in src_segment:
+                                    analysis.has_variance_reeval_rule = True
+                            except Exception:
+                                pass
+                        analysis.has_deterministic_synthesis = (
+                            analysis.has_security_override_rule or analysis.has_variance_reeval_rule
+                        )
                              
             except Exception as e:
                 # Log or handle parsing errors for non-parseable files

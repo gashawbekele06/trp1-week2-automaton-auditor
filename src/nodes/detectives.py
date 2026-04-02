@@ -122,6 +122,50 @@ def repo_investigator(state: AgentState) -> Dict:
                     confidence=0.9
                 ))
 
+            elif dim_id == "judicial_nuance":
+                evidences[dim_id].append(Evidence(
+                    goal="Distinct Judge Personas Detected",
+                    found=ast_analysis.has_distinct_judge_prompts,
+                    content=f"{ast_analysis.judge_prompt_count} distinct system prompt constant(s) found in judges.py",
+                    location="src/nodes/judges.py",
+                    rationale="AST scanned for string constants containing 'Prosecutor', 'Defense', 'TechLead' persona markers",
+                    confidence=0.85
+                ))
+                evidences[dim_id].append(Evidence(
+                    goal="Structured Output Bound to Each Judge",
+                    found=ast_analysis.uses_structured_output,
+                    content="with_structured_output detected; judges bound to JudicialOpinion schema",
+                    location="src/nodes/judges.py",
+                    rationale="AST parsed judge LLM binding",
+                    confidence=0.9
+                ))
+
+            elif dim_id == "chief_justice_synthesis":
+                evidences[dim_id].append(Evidence(
+                    goal="Deterministic Synthesis Logic",
+                    found=ast_analysis.has_deterministic_synthesis,
+                    content="Hardcoded if/else conflict resolution rules detected in justice.py",
+                    location="src/nodes/justice.py",
+                    rationale="AST scanned for deterministic rule patterns",
+                    confidence=0.9
+                ))
+                evidences[dim_id].append(Evidence(
+                    goal="Security Override Rule",
+                    found=ast_analysis.has_security_override_rule,
+                    content="security_override: score capped at 3 when Prosecutor flags security issue",
+                    location="src/nodes/justice.py",
+                    rationale="AST detected security_flag check and min(final, 3) cap",
+                    confidence=0.9
+                ))
+                evidences[dim_id].append(Evidence(
+                    goal="Variance Re-evaluation Rule",
+                    found=ast_analysis.has_variance_reeval_rule,
+                    content="Score variance > 2 triggers re-evaluation and dissent summary",
+                    location="src/nodes/justice.py",
+                    rationale="AST detected var > 2 conditional block",
+                    confidence=0.9
+                ))
+
         # Explicit cleanup of temp dir handle
         if is_temp and _temp_dir_handle is not None:
             _temp_dir_handle.cleanup()

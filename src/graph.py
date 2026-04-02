@@ -41,7 +41,9 @@ def evidence_aggregator(state: AgentState):
             items = evidences[dim]
             serial = []
             for ev in items:
-                if hasattr(ev, "dict"):
+                if hasattr(ev, "model_dump"):
+                    evd = ev.model_dump()
+                elif hasattr(ev, "dict"):
                     evd = ev.dict()
                 else:
                     evd = dict(ev)

@@ -135,7 +135,7 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Theoretical Depth (Documentation): Terms appear in detailed architectural explanations. The report explains how Dialectical Synthesis is implemented via th...)
   - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Metacognition, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-In, Determine presence of Fan-Out
-- **Prosecutor** (2): (Rubric: Theoretical Depth (Documentation) - Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Synchronization'. Determine if the term appears in a substantive architectural expl...)
+- **Prosecutor** (2): (Rubric: Theoretical Depth (Documentation) — Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Synchronization'. Determine if the term appears in a substantive architectural expl...)
   - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Metacognition, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-In, Determine presence of Fan-Out
 - **TechLead** (4): Rubric: Theoretical Depth (Documentation). Guidance: Search the PDF report for these specific terms: 'Dialectical Synthesis', 'Fan-In / Fan-Out', 'Metacognition', 'State Syn...; Artifacts present; pragmatic functionality likely.
   - Cited Evidence: Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Metacognition, Determine presence of Dialectical Synthesis, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Metacognition, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Dialectical Synthesis, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Metacognition, Determine presence of State Synchronization, Determine presence of Fan-In, Determine presence of Fan-Out, Determine presence of Fan-In, Determine presence of Fan-In, Determine presence of Fan-Out
@@ -149,11 +149,11 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 **Judge Opinions:**
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Report Accuracy (Cross-Reference): All file paths mentioned in the report exist in the repo. Feature claims match code evidence. Zero hallucinated paths....)
-  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/graph.py, Cited file exists: src/state.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/nodes/justice.py
-- **Prosecutor** (2): (Rubric: Report Accuracy (Cross-Reference) - Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...)
-  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/graph.py, Cited file exists: src/state.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/nodes/justice.py
+  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/nodes/justice.py, Cited file exists: src/graph.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/state.py
+- **Prosecutor** (2): (Rubric: Report Accuracy (Cross-Reference) — Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We implemented parallel Judges in src/nodes/judges.py'). Cross-reference each claimed...)
+  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/nodes/justice.py, Cited file exists: src/graph.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/state.py
 - **TechLead** (4): Rubric: Report Accuracy (Cross-Reference). Guidance: Extract all file paths mentioned in the PDF report (e.g., 'We isolated the AST logic in src/tools/ast_parser.py', 'We im...; Artifacts present; pragmatic functionality likely.
-  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/graph.py, Cited file exists: src/state.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/nodes/justice.py
+  - Cited Evidence: Extract file paths from PDF, Cited file exists: src/nodes/justice.py, Cited file exists: src/graph.py, Cited file exists: src/nodes/judges.py, Cited file exists: src/state.py
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
@@ -165,7 +165,7 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Git Forensic Analysis: More than 3 commits showing clear progression from setup to tool engineering to graph orchestration. Atomic, step-by-ste...)
   - Cited Evidence: Extract Git History Progression
-- **Prosecutor** (2): (Rubric: Git Forensic Analysis - Run 'git log --oneline --reverse' on the cloned repository. Count the total number of commits. Check if the commit history tells a progression story: Environment Setup -> Tool Engineering -> Graph Orc...)
+- **Prosecutor** (2): (Rubric: Git Forensic Analysis — Run 'git log --oneline --reverse' on the cloned repository. Count the total number of commits. Check if the commit history tells a progression story: Environment Setup -> Tool Engineering -> Graph Orc...)
   - Cited Evidence: Extract Git History Progression
 - **TechLead** (4): Rubric: Git Forensic Analysis. Guidance: Run 'git log --oneline --reverse' on the cloned repository. Count the total number of commits. Check if the commit histo...; Artifacts present; pragmatic functionality likely.
   - Cited Evidence: Extract Git History Progression
@@ -180,7 +180,7 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (State Management Rigor: 'AgentState' uses TypedDict or BaseModel with Annotated reducers. 'Evidence' and 'JudicialOpinion' are Pydantic BaseMode...)
   - Cited Evidence: Verify State File Existence, Verify Pydantic/TypedDict usage, Verify Reducers
-- **Prosecutor** (2): (Rubric: State Management Rigor - Scan for 'src/state.py' or equivalent state definitions in 'src/graph.py'. Use AST parsing (not regex) to find classes inheriting from 'BaseModel' (Pydantic) or 'TypedDict'. Verify that the state acti...)
+- **Prosecutor** (2): (Rubric: State Management Rigor — Scan for 'src/state.py' or equivalent state definitions in 'src/graph.py'. Use AST parsing (not regex) to find classes inheriting from 'BaseModel' (Pydantic) or 'TypedDict'. Verify that the state acti...)
   - Cited Evidence: Verify State File Existence, Verify Pydantic/TypedDict usage, Verify Reducers
 - **TechLead** (5): Rubric: State Management Rigor. Guidance: Scan for 'src/state.py' or equivalent state definitions in 'src/graph.py'. Use AST parsing (not regex) to find classes i...; Proper reducers detected; good parallel safety.
   - Cited Evidence: Verify State File Existence, Verify Pydantic/TypedDict usage, Verify Reducers
@@ -195,7 +195,7 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Graph Orchestration Architecture: Two distinct parallel fan-out/fan-in patterns: one for Detectives, one for Judges. Conditional edges handle error states...)
   - Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
-- **Prosecutor** (2): (Rubric: Graph Orchestration Architecture - Scan for the 'StateGraph' builder instantiation in 'src/graph.py'. Use AST parsing to analyze 'builder.add_edge()' and 'builder.add_conditional_edges()' calls. Determine if the Detectives (RepoInvesti...)
+- **Prosecutor** (2): (Rubric: Graph Orchestration Architecture — Scan for the 'StateGraph' builder instantiation in 'src/graph.py'. Use AST parsing to analyze 'builder.add_edge()' and 'builder.add_conditional_edges()' calls. Determine if the Detectives (RepoInvesti...)
   - Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
 - **TechLead** (4): Rubric: Graph Orchestration Architecture. Guidance: Scan for the 'StateGraph' builder instantiation in 'src/graph.py'. Use AST parsing to analyze 'builder.add_edge()' and '...; Artifacts present; pragmatic functionality likely.
   - Cited Evidence: Verify StateGraph Definition, Verify Fan-Out / Fan-In patterns
@@ -210,7 +210,7 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Safe Tool Engineering: All git operations run inside 'tempfile.TemporaryDirectory()'. 'subprocess.run()' used with error handling. No raw 'os.s...)
   - Cited Evidence: Verify Git Sandboxing, Security Violations
-- **Prosecutor** (1): (Rubric: Safe Tool Engineering - Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing is used for git clone operations. Check for raw 'os.system()' calls -- these ar...); Missing evidence: Security Violations; Raw os.system usage detected: security risk
+- **Prosecutor** (1): (Rubric: Safe Tool Engineering — Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing is used for git clone operations. Check for raw 'os.system()' calls -- these ar...); Missing evidence: Security Violations; Raw os.system usage detected: security risk
   - Cited Evidence: Verify Git Sandboxing, Security Violations
 - **TechLead** (5): Rubric: Safe Tool Engineering. Guidance: Scan 'src/tools/' for the repository cloning logic. Verify that 'tempfile.TemporaryDirectory()' or equivalent sandboxing...; Sandboxed cloning detected.
   - Cited Evidence: Verify Git Sandboxing, Security Violations
@@ -225,30 +225,40 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Structured Output Enforcement: All Judge LLM calls use '.with_structured_output(JudicialOpinion)' or equivalent. Retry logic exists for malformed outpu...)
   - Cited Evidence: Structured Output Usage
-- **Prosecutor** (2): (Rubric: Structured Output Enforcement - Scan Judge nodes in 'src/nodes/judges.py'. Verify that LLMs are invoked using '.with_structured_output()' or '.bind_tools()' bound to the Pydantic 'JudicialOpinion' schema. Check that the output inclu...)
+- **Prosecutor** (2): (Rubric: Structured Output Enforcement — Scan Judge nodes in 'src/nodes/judges.py'. Verify that LLMs are invoked using '.with_structured_output()' or '.bind_tools()' bound to the Pydantic 'JudicialOpinion' schema. Check that the output inclu...)
   - Cited Evidence: Structured Output Usage
 - **TechLead** (4): Rubric: Structured Output Enforcement. Guidance: Scan Judge nodes in 'src/nodes/judges.py'. Verify that LLMs are invoked using '.with_structured_output()' or '.bind_tool...; Artifacts present; pragmatic functionality likely.
   - Cited Evidence: Structured Output Usage
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
-### Judicial Nuance and Dialectics — Final Score: 3
+### Judicial Nuance and Dialectics — Final Score: 1
+
+**Dissent:** High variance and re-evaluation found missing cited evidence; prosecutor position favored.
 
 **Judge Opinions:**
 
-- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Scan 'src/nodes/judges.py' or prompt templates. Verify that Prosecutor, Defense, and Tech Lead personas have distinct, c...
-- **Prosecutor** (3): (Rubric: Judicial Nuance and Dialectics - Scan 'src/nodes/judges.py' or prompt templates. Verify that Prosecutor, Defense, and Tech Lead personas have distinct, conflicting system prompts. Compare the three prompts -- if they share more than ...)
-- **TechLead** (2): Rubric: Judicial Nuance and Dialectics. Guidance: Scan 'src/nodes/judges.py' or prompt templates. Verify that Prosecutor, Defense, and Tech Lead personas have distinct, c...; No clear artifacts; technical debt suspected.
+- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Judicial Nuance and Dialectics: Three clearly distinct personas with conflicting philosophies. Prompts actively instruct the model to be adversarial (Pr...)
+  - Cited Evidence: Distinct Judge Personas Detected, Structured Output Bound to Each Judge
+- **Prosecutor** (1): (Rubric: Judicial Nuance and Dialectics — Scan 'src/nodes/judges.py' or prompt templates. Verify that Prosecutor, Defense, and Tech Lead personas have distinct, conflicting system prompts. Compare the three prompts -- if they share more than ...); Missing evidence: Distinct Judge Personas Detected
+  - Cited Evidence: Distinct Judge Personas Detected, Structured Output Bound to Each Judge
+- **TechLead** (4): Rubric: Judicial Nuance and Dialectics. Guidance: Scan 'src/nodes/judges.py' or prompt templates. Verify that Prosecutor, Defense, and Tech Lead personas have distinct, c...; Artifacts present; pragmatic functionality likely.
+  - Cited Evidence: Distinct Judge Personas Detected, Structured Output Bound to Each Judge
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
-### Chief Justice Synthesis Engine — Final Score: 3
+### Chief Justice Synthesis Engine — Final Score: 4
+
+**Dissent:** High variance across judges; median score used after re-evaluation.
 
 **Judge Opinions:**
 
-- **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Scan 'src/nodes/justice.py' for the ChiefJusticeNode implementation. Verify the conflict resolution uses hardcoded deter...
-- **Prosecutor** (3): (Rubric: Chief Justice Synthesis Engine - Scan 'src/nodes/justice.py' for the ChiefJusticeNode implementation. Verify the conflict resolution uses hardcoded deterministic Python logic, not just an LLM prompt. Check for these specific rules: (...)
-- **TechLead** (2): Rubric: Chief Justice Synthesis Engine. Guidance: Scan 'src/nodes/justice.py' for the ChiefJusticeNode implementation. Verify the conflict resolution uses hardcoded deter...; No clear artifacts; technical debt suspected.
+- **Defense** (5): Evidence of intent and partial implementation found; reward effort and intent. (Chief Justice Synthesis Engine: Deterministic Python if/else logic implementing named rules (security override, fact supremacy, functionality weight). S...)
+  - Cited Evidence: Deterministic Synthesis Logic, Security Override Rule, Variance Re-evaluation Rule
+- **Prosecutor** (2): (Rubric: Chief Justice Synthesis Engine — Scan 'src/nodes/justice.py' for the ChiefJusticeNode implementation. Verify the conflict resolution uses hardcoded deterministic Python logic, not just an LLM prompt. Check for these specific rules: (...)
+  - Cited Evidence: Deterministic Synthesis Logic, Security Override Rule, Variance Re-evaluation Rule
+- **TechLead** (4): Rubric: Chief Justice Synthesis Engine. Guidance: Scan 'src/nodes/justice.py' for the ChiefJusticeNode implementation. Verify the conflict resolution uses hardcoded deter...; Artifacts present; pragmatic functionality likely.
+  - Cited Evidence: Deterministic Synthesis Logic, Security Override Rule, Variance Re-evaluation Rule
 
 **Remediation:** See detective evidence and implement missing artifacts.
 
@@ -258,7 +268,7 @@ Enable Full Parallel Detective Execution: Transition from sequential execution (
 
 - **Defense** (3): No direct evidence found in this dimension, but allow mitigation for effort shown elsewhere. Consider forensic instruction: Extract images from the PDF report. Classify each diagram: is it an accurate LangGraph State Machine diagram, a sequence...
   - Cited Evidence: Architectural Diagram Analysis
-- **Prosecutor** (1): (Rubric: Architectural Diagram Analysis - Extract images from the PDF report. Classify each diagram: is it an accurate LangGraph State Machine diagram, a sequence diagram, or just generic flowchart boxes? Check if the diagram explicitly visua...); Missing evidence: Architectural Diagram Analysis
+- **Prosecutor** (1): (Rubric: Architectural Diagram Analysis — Extract images from the PDF report. Classify each diagram: is it an accurate LangGraph State Machine diagram, a sequence diagram, or just generic flowchart boxes? Check if the diagram explicitly visua...); Missing evidence: Architectural Diagram Analysis
   - Cited Evidence: Architectural Diagram Analysis
 - **TechLead** (2): Rubric: Architectural Diagram Analysis. Guidance: Extract images from the PDF report. Classify each diagram: is it an accurate LangGraph State Machine diagram, a sequence...; No clear artifacts; technical debt suspected.
   - Cited Evidence: Architectural Diagram Analysis
